@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CMU Report</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="style.css"/>
+    <style>
+        /* 🔔 TOAST NOTIFICATION */
+        #toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #222;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            display: none;
+            z-index: 9999;
+            font-family: sans-serif;
+        }
+    </style>
+</head>
+<body>
+
+  <div id="toast"></div>
+
+  <div id="adminControls" class="admin-controls-container" style="display: none;">
+      <div id="adminLoginBox" class="admin-login-controls">
+          <div class="admin-login-content">
+              <span class="close-admin" onclick="toggleAdminControls()">×</span>
+              <h4>Admin Login</h4>
+              <input id="adminEmail" placeholder="email">
+              <input id="adminPassword" type="password" placeholder="password">
+              <button onclick="login()">Login</button>
+              <p id="loginStatus">ยังไม่ได้ login</p>
+          </div>
+      </div>
+
+      <div id="adminDashboardBox" class="admin-dashboard-controls" style="display: none;">
+          <div class="admin-dashboard-content">
+              <h4>Admin Dashboard</h4>
+              <p>ยินดีต้อนรับ แอดมิน</p>
+              <button onclick="loadTable()">🔄 Refresh ตาราง</button>
+              <button onclick="logout()">Logout</button>
+          </div>
+      </div>
+  </div>
+
+  <button id="toggleAdminBtn" onclick="toggleAdminControls()" style="position: absolute; top: 10px; right: 10px; z-index: 2000; padding: 5px 10px; background: #333; color: white; border: none; border-radius: 5px; cursor: pointer; display: none;">
+      🔐 Admin
+  </button>
+
+  <div id="map"></div>
+
+  <div id="reportPopup" class="report-popup-form" style="display: none;">
+    <div class="popup-form-content">
+      <span class="close-popup" onclick="hideReportPopup()">×</span>
+      <h4>แจ้งปัญหา (หลังจากปักหมุดสำเร็จ)</h4>
+      <label for="category">🏷️ หมวดหมู่ปัญหา:</label>
+      <select id="category">
+        <option value="💡 ไฟฟ้า / หลอดไฟ">💡 ไฟฟ้า / หลอดไฟขาด</option>
+        <option value="🏢 อาคาร / แอร์ห้องเรียน">🏢 อาคาร / แอร์ / อุปกรณ์ห้องเรียน</option>
+        <option value="💧 ห้องน้ำ / ท่อประปา">💧 ห้องน้ำ / ท่อประปา</option>
+        <option value="🛣️ ถนน / ที่จอดรถ">🛣️ ถนน / ทางเดิน / ที่จอดรถ</option>
+        <option value="🗑️ ขยะ / ความสะอาด">🗑️ ขยะ / ความสะอาดพื้นที่</option>
+        <option value="🌐 อินเทอร์เน็ต / Wi-Fi">🌐 อินเทอร์เน็ต / Wi-Fi</option>
+        <option value="🐶 สัตว์จรจัด / สัตว์มีพิษ">🐶 สัตว์จรจัด / สัตว์มีพิษ</option>
+        <option value="❓ อื่นๆ">❓ อื่นๆ</option>
+      </select>
+
+      <input type="text" id="title" placeholder="ปัญหาอะไร (เช่น แอร์ไม่เย็น)"/>
+      <textarea id="detail" placeholder="รายละเอียด (เช่น อ่างเเก้วหรือชื่อคณะ)"></textarea>
+      
+      <input type="file" id="imageInput" accept="image/*"/>
+      
+      <button type="button" id="gpsBtn" onclick="getUserLocation()">📍 ใช้ตำแหน่งปัจจุบันของฉัน</button>
+      <button id="submitBtn">แจ้งปัญหา</button>
+    </div>
+  </div>
+
+  <div id="adminPanel" style="display: none;">
+      <h4>📊 Admin Dashboard (ตารางรายงาน)</h4>
+      <button onclick="loadTable()">🔄 Refresh</button>
+      <table border="1">
+          <thead>
+              <tr>
+                  <th>Title</th>
+                  <th>Action</th>
+              </tr>
+          </thead>
+          <tbody id="reportTable"></tbody>
+      </table>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+  <script src="script.js"></script>
+
+</body>
+</html>

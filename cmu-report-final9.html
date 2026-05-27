@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CMU Report</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #1E2D5A; --blue: #2563EB; --blue-light: #EFF6FF;
+  --purple: #7C3AED; --red: #EF4444; --green: #16A34A;
+  --gray-1: #F9FAFB; --gray-2: #F3F4F6; --gray-3: #E5E7EB;
+  --gray-4: #9CA3AF; --gray-5: #6B7280; --gray-6: #374151; --text: #111827;
+  --shadow: 0 1px 3px rgba(0,0,0,.08); --shadow-md: 0 4px 16px rgba(0,0,0,.12);
+  --shadow-lg: 0 10px 40px rgba(0,0,0,.18); --r: 8px; --rl: 14px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'IBM Plex Sans Thai',sans-serif;background:#F0F4F8;color:var(--text);min-height:100vh}
+
+/* NAVBAR */
+.navbar{background:var(--navy);box-shadow:var(--shadow-md);position:sticky;top:0;z-index:200}
+.nav-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;padding:0 20px;height:54px;gap:4px}
+.nav-logo{font-size:17px;font-weight:700;color:#fff;margin-right:20px;white-space:nowrap;display:flex;align-items:center;gap:8px}
+.nav-logo span{opacity:.6;font-weight:400;font-size:12px}
+.nav-link{padding:7px 14px;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:none;color:rgba(255,255,255,.7);transition:all .18s;white-space:nowrap;font-family:inherit}
+.nav-link:hover{background:rgba(255,255,255,.12);color:#fff}
+.nav-link.ac{background:rgba(255,255,255,.15);color:#fff}
+.nav-spacer{flex:1}
+.nav-guide{display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);transition:all .18s;white-space:nowrap;font-family:inherit;text-decoration:none}
+.nav-guide:hover{background:rgba(255,255,255,.18);color:#fff}
+.nav-feedback{display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:#F59E0B;color:#fff;transition:all .18s;white-space:nowrap;font-family:inherit;text-decoration:none}
+.nav-feedback:hover{background:#D97706}
+.nav-login-btn{display:flex;align-items:center;gap:6px;padding:7px 16px;border-radius:6px;background:rgba(255,255,255,.12);color:#fff;border:1.5px solid rgba(255,255,255,.35);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .18s;white-space:nowrap}.nav-login-btn:hover{background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.6)}
+.nav-report{padding:8px 18px;border-radius:6px;background:var(--red);color:#fff;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all .18s;font-family:inherit;margin-left:8px}
+.nav-report:hover{background:#DC2626;transform:translateY(-1px);box-shadow:0 4px 12px rgba(239,68,68,.35)}
+/* avatar */
+.av-wrap{position:relative;margin-left:8px}
+.av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#7C3AED,#2563EB);color:#fff;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid rgba(255,255,255,.3);transition:all .18s}
+.av:hover{border-color:#fff}
+.dd{position:absolute;top:calc(100% + 10px);right:0;background:#fff;border:1px solid var(--gray-3);border-radius:var(--rl);box-shadow:var(--shadow-lg);min-width:230px;padding:8px;z-index:300;display:none;animation:fdDown .18s ease}
+.dd.open{display:block}
+@keyframes fdDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.dd-user{padding:10px 12px 12px;border-bottom:1px solid var(--gray-2);margin-bottom:6px}
+.dd-name{font-weight:700;font-size:14px}
+.dd-email{font-size:11px;color:var(--gray-4)}
+.dd-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r);cursor:pointer;color:var(--gray-6);font-size:13px;font-weight:500;transition:all .15s}
+.dd-item:hover{background:var(--gray-1);color:var(--text)}
+.dd-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:20px}
+.dd-div{height:1px;background:var(--gray-2);margin:6px 0}
+.dd-out{color:var(--red)}.dd-out:hover{background:#FEF2F2}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,var(--navy) 0%,#2D4A8A 50%,#1E3A6E 100%);padding:48px 20px;text-align:center;color:#fff;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+.hero-c{position:relative;z-index:1;max-width:700px;margin:0 auto}
+.hero h1{font-size:clamp(22px,4vw,38px);font-weight:700;margin-bottom:12px}
+.hero p{font-size:15px;opacity:.8;margin-bottom:28px;line-height:1.7}
+.hero-stats{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:20px}
+.h-stat{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:10px;padding:12px 22px;backdrop-filter:blur(8px)}
+.h-stat-n{font-size:22px;font-weight:700}
+.h-stat-l{font-size:11px;opacity:.7;margin-top:2px}
+
+/* CAROUSEL BAR */
+.car-sec{background:#fff;border-bottom:1px solid var(--gray-3)}
+.car-in{max-width:1200px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:16px;height:90px}
+.car-wrap{flex:1;overflow:hidden}
+.car-track{display:flex;transition:transform .4s ease}
+.car-slide{min-width:100%;display:flex;align-items:center;gap:14px;padding:10px 0}
+.c-em{font-size:28px;flex-shrink:0}
+.c-tx h3{font-size:15px;font-weight:700;color:var(--navy)}
+.c-tx p{font-size:12px;color:var(--gray-5);margin-top:2px}
+.c-dots{display:flex;gap:5px;margin-top:5px}
+.c-dot{width:5px;height:5px;border-radius:50%;background:var(--gray-3);cursor:pointer;transition:all .2s}
+.c-dot.ac{background:var(--blue);width:14px;border-radius:3px}
+.c-btn{width:28px;height:28px;border-radius:50%;border:1px solid var(--gray-3);background:#fff;cursor:pointer;font-size:14px;transition:all .18s;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.c-btn:hover{background:var(--gray-2)}
+.stat-pills{display:flex;flex-direction:column;gap:5px;flex-shrink:0;padding:8px 0}
+.sp{padding:5px 12px;border-radius:5px;font-size:11px;font-weight:600;white-space:nowrap}
+.sp-r{background:#FEE2E2;color:#991B1B}
+.sp-o{background:#FEF3C7;color:#92400E}
+.sp-g{background:#DCFCE7;color:#166534;font-size:12px;padding:7px 14px}
+
+/* CONTENT */
+.content{max-width:1200px;margin:24px auto;padding:0 20px}
+.tab-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:8px}
+.tabs{display:flex;gap:3px;background:#fff;padding:4px;border-radius:8px;border:1px solid var(--gray-3);box-shadow:var(--shadow)}
+.tab{padding:6px 14px;border-radius:5px;font-size:12px;font-weight:500;cursor:pointer;border:none;background:none;color:var(--gray-5);font-family:inherit;transition:all .18s}
+.tab.ac{background:var(--blue);color:#fff}
+.filter-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--r);border:1px solid var(--gray-3);background:#fff;font-size:12px;font-weight:500;cursor:pointer;color:var(--gray-6);font-family:inherit;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.card{background:#fff;border-radius:var(--rl);border:1px solid var(--gray-3);box-shadow:var(--shadow);overflow:hidden;cursor:pointer;transition:all .2s}
+.card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.card-img{height:80px;display:flex;align-items:center;justify-content:center;font-size:30px}
+.ci1{background:linear-gradient(135deg,#EEF2FF,#E0E7FF)}
+.ci2{background:linear-gradient(135deg,#FEF3C7,#FDE68A)}
+.ci3{background:linear-gradient(135deg,#DCFCE7,#BBF7D0)}
+.ci4{background:linear-gradient(135deg,#FEE2E2,#FECACA)}
+.card-body{padding:10px 12px}
+.card-title{font-size:12px;font-weight:700;margin-bottom:5px}
+.card-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
+.tag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px}
+.ty{background:#FEF9C3;color:#854D0E}
+.tr{background:#FEE2E2;color:#991B1B}
+.tb{background:#DBEAFE;color:#1E40AF}
+.tg{background:#DCFCE7;color:#166534}
+.card-info{font-size:11px;color:var(--gray-5);line-height:1.7}
+.pagi{display:flex;justify-content:center;gap:5px;margin-top:24px;padding-bottom:40px}
+.pagi-d{width:8px;height:8px;border-radius:50%;background:var(--gray-3)}
+.pagi-d.ac{background:var(--blue)}
+
+/* AUTH OVERLAY */
+#auth-overlay{position:fixed;inset:0;background:rgba(15,23,42,.6);backdrop-filter:blur(6px);z-index:500;display:none;align-items:center;justify-content:center;padding:20px}
+#auth-overlay.open{display:flex;animation:fadeBg .2s ease}
+@keyframes fadeBg{from{opacity:0}to{opacity:1}}
+.auth-modal{background:#fff;border-radius:20px;box-shadow:var(--shadow-lg);width:100%;max-width:400px;overflow:hidden;animation:slideUp .25s ease}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.auth-head{background:linear-gradient(135deg,var(--navy),#2D4A8A);padding:26px 32px 20px;text-align:center}
+.auth-head .logo{font-size:13px;font-weight:700;color:rgba(255,255,255,.6);letter-spacing:2px;text-transform:uppercase}
+.auth-head .ttl{font-size:28px;font-weight:700;color:#fff;margin-top:5px}
+.auth-body{padding:26px 32px}
+.step{display:none}
+.step.ac{display:block}
+.step-ind{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.step-txt{font-size:11px;font-weight:700;color:var(--gray-4);text-transform:uppercase;letter-spacing:1px}
+.sdots{display:flex;gap:4px}
+.sd{width:6px;height:6px;border-radius:50%;background:var(--gray-3)}
+.sd.ac{background:var(--blue)}.sd.done{background:var(--green)}
+.field{margin-bottom:13px}
+.fi{position:relative}
+.fi .ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--gray-4);pointer-events:none}
+.fi input{padding-left:38px!important}
+.field input{width:100%;padding:11px 14px;border-radius:8px;border:1.5px solid var(--gray-3);font-size:14px;font-family:inherit;color:var(--text);background:var(--gray-1);outline:none;transition:all .18s}
+.field input:focus{border-color:var(--blue);background:#fff;box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.field input.err{border-color:var(--red)}
+.forgot{display:block;text-align:right;font-size:11px;color:var(--blue);cursor:pointer;margin-top:-6px;margin-bottom:10px}
+.btn-main{width:100%;padding:13px;border-radius:8px;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s;color:#fff;margin-top:4px}
+.btn-main:disabled{opacity:.6;cursor:not-allowed}
+.b-purple{background:var(--purple)}.b-purple:hover:not(:disabled){background:#6D28D9}
+.b-blue{background:var(--blue)}.b-blue:not(:disabled):hover{background:#1D4ED8}
+.b-green{background:var(--green)}.b-green:hover{background:#15803D}
+.btn-arrow{width:48px;height:48px;border-radius:50%;background:var(--gray-2);border:none;cursor:pointer;font-size:20px;margin:14px auto 0;display:flex;align-items:center;justify-content:center;transition:all .18s}
+.btn-arrow:hover{background:var(--gray-3)}
+.divider{display:flex;align-items:center;gap:10px;margin:16px 0;color:var(--gray-4);font-size:11px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--gray-3)}
+.btn-google{width:100%;padding:11px 14px;border-radius:8px;background:#fff;border:1.5px solid var(--gray-3);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--gray-6);display:flex;align-items:center;justify-content:center;gap:8px;transition:all .18s;position:relative}
+.btn-google:hover{border-color:#4285F4;background:#F8FBFF}
+.g-badge{position:absolute;right:12px;font-size:10px;color:var(--gray-4);background:var(--gray-2);padding:1px 6px;border-radius:4px}
+.email-box{background:var(--blue-light);border:1px solid #BFDBFE;border-radius:10px;padding:18px;text-align:center;margin-bottom:14px}
+.email-box .ei{font-size:38px;margin-bottom:8px}
+.email-box h4{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:5px}
+.email-box p{font-size:12px;color:var(--gray-5);line-height:1.7}
+.ehl{font-weight:700;color:var(--blue)}
+.btn-sim{width:100%;padding:10px;border-radius:8px;background:#DBEAFE;border:none;color:var(--blue);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;margin-bottom:8px;transition:all .18s}
+.btn-sim:hover{background:#BFDBFE}
+.resend{font-size:11px;color:var(--gray-4);text-align:center}
+.resend span{color:var(--blue);cursor:pointer}
+.auth-footer{text-align:center;margin-top:16px;font-size:12px;color:var(--gray-4)}
+.auth-footer a{color:var(--blue);cursor:pointer;font-weight:500}
+/* error msg */
+.err-msg{font-size:11px;color:var(--red);margin-top:-8px;margin-bottom:8px;display:none}
+.err-msg.show{display:block}
+/* spinner */
+.spin{width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* MY PANEL */
+#mp-overlay{position:fixed;inset:0;background:rgba(15,23,42,.5);backdrop-filter:blur(4px);z-index:400;display:none;align-items:flex-start;justify-content:flex-end;padding:66px 16px 16px}
+#mp-overlay.open{display:flex;animation:fadeBg .2s ease}
+.mp{background:#fff;border-radius:var(--rl);box-shadow:var(--shadow-lg);width:380px;max-height:85vh;overflow-y:auto;animation:slideDown .22s ease}
+@keyframes slideDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+.mp-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--gray-2);position:sticky;top:0;background:#fff;z-index:1}
+.mp-head h3{font-size:15px;font-weight:700}
+.close-x{width:28px;height:28px;border:none;background:var(--gray-2);border-radius:6px;cursor:pointer;font-size:14px}
+.mp-tabs{display:flex;border-bottom:1px solid var(--gray-2);padding:0 20px}
+.mp-tab{padding:11px 0;margin-right:22px;font-size:13px;font-weight:600;color:var(--gray-4);border-bottom:2px solid transparent;cursor:pointer;transition:all .18s}
+.mp-tab.ac{color:var(--blue);border-bottom-color:var(--blue)}
+.mp-con{display:none;padding:16px 20px}
+.mp-con.ac{display:block}
+.ri{border:1px solid var(--gray-3);border-radius:var(--r);padding:14px;margin-bottom:10px}
+.ri-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px}
+.ri-title{font-size:13px;font-weight:700}
+.ri-s{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap}
+.s-pending{background:#FEF9C3;color:#854D0E}
+.s-active{background:#DBEAFE;color:#1E40AF}
+.s-done{background:#DCFCE7;color:#166534}
+.ri-desc{font-size:11px;color:var(--gray-5);line-height:1.6;margin-bottom:6px}
+.ri-date{font-size:10px;color:var(--gray-4)}
+.rep-item{border:1px solid var(--gray-3);border-radius:var(--r);padding:14px;margin-bottom:10px}
+.rep-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.rep-av{width:28px;height:28px;border-radius:50%;background:var(--navy);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.rep-name{font-size:12px;font-weight:600}
+.rep-time{font-size:10px;color:var(--gray-4);margin-left:auto}
+.rep-msg{background:var(--gray-1);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--gray-6);line-height:1.6}
+.rep-ref{font-size:10px;color:var(--blue);margin-top:6px;cursor:pointer}
+
+/* TOAST */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#1E293B;color:#fff;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:500;box-shadow:var(--shadow-lg);opacity:0;transition:all .3s;z-index:9999;white-space:nowrap;pointer-events:none;max-width:90vw;text-align:center}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast.ok{background:#166534}
+#toast.er{background:#991B1B}
+
+
+/* ===== HERO CAROUSEL (ตามดีไซน์ต้นแบบ) ===== */
+.hero-carousel-wrap {
+  display: flex; background: #FAFAFA;
+  border-bottom: 1px solid var(--gray-3);
+  padding: 16px 20px; gap: 20px;
+  max-width: 1200px; margin: 0 auto;
+  align-items: stretch;
+}
+
+/* ฝั่งซ้าย: หน้าโฆษณา (เท่ากับแมพ) */
+.hero-left {
+  flex: 1.2; position: relative; border-radius: 14px;
+  overflow: hidden; min-height: 260px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.1);
+}
+.hc-slider { width: 100%; overflow: hidden; height: 100%; min-height: 260px; }
+.hc-track { display: flex; height: 100%; transition: transform .45s cubic-bezier(.4,0,.2,1); }
+.hc-slide { min-width: 100%; height: 100%; }
+.hc-img-box { width: 100%; height: 100%; }
+.hc-img-placeholder {
+  width: 100%; height: 100%; min-height: 260px;
+  background: linear-gradient(135deg, #f5e6d3, #f0d4b8);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 10px; font-size: 40px;
+}
+.hc-img-placeholder p { font-size: 15px; font-weight: 600; color: var(--navy); font-family: inherit; }
+
+.hc-arrow {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 30px; height: 30px; border-radius: 50%;
+  background: rgba(255,255,255,.92); border: 1px solid var(--gray-3);
+  font-size: 18px; cursor: pointer; z-index: 10;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,.12); transition: all .18s; color: var(--navy);
+}
+.hc-arrow:hover { background: #fff; }
+.hc-prev { left: 10px; }
+.hc-next { right: 10px; }
+.hc-dots {
+  position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 5px; z-index: 10;
+}
+.hc-dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(0,0,0,.25); cursor: pointer; transition: all .2s; }
+.hc-dot.ac { background: var(--navy); width: 18px; border-radius: 4px; }
+
+/* ฝั่งขวา: stat boxes */
+.hero-right {
+  flex: 1; display: flex; flex-direction: column; gap: 8px; justify-content: center;
+  min-width: 0; max-width: 420px;
+}
+.stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.stat-box {
+  border-radius: 40px; padding: 10px 20px;
+  display: flex; flex-direction: column; gap: 2px;
+  cursor: default; height: 52px; justify-content: center;
+}
+.stat-box-label { font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+.stat-box-val { font-size: 18px; font-weight: 800; text-align: center; margin-top: 2px; }
+
+/* สีตามดีไซน์ */
+.sb-red   { background: #F87171; color: #fff; }
+.sb-yellow { background: #FACC15; color: #1A1A1A; }
+.sb-blue  { background: #60A5FA; color: #fff; }
+.sb-green { background: #4ADE80; color: #166534; }
+/* แถวทั้งหมด */
+.stat-total-row {
+  background: #DDD6FE; border-radius: 40px;
+  padding: 10px 20px; display: flex;
+  align-items: center; justify-content: space-between;
+  gap: 12px; height: 52px;
+  width: 100%;
+}
+.stat-total-row .lbl { font-size: 12px; font-weight: 700; color: #4C1D95; display: flex; align-items: center; gap: 5px; }
+.stat-total-row .val { font-size: 18px; font-weight: 800; color: #1A1A1A; }
+
+/* CONTENT */
+
+.content { max-width: 1200px; margin: 20px auto; padding: 0 20px; }
+.tab-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
+.tabs { display: flex; gap: 3px; }
+.tab { padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; background: var(--gray-2); color: var(--gray-5); font-family: inherit; transition: all .18s; }
+.tab.ac { background: var(--navy); color: #fff; }
+.sort-sel { padding: 7px 12px; border-radius: var(--r); border: 1px solid var(--gray-3); font-size: 12px; color: var(--gray-5); background: #fff; cursor: pointer; font-family: inherit; box-shadow: var(--shadow); }
+
+/* CARDS */
+.grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; min-height: 200px; }
+.rep-card {
+  background: #fff; border-radius: 12px; border: 1px solid var(--gray-3);
+  box-shadow: var(--shadow); overflow: hidden; cursor: pointer; transition: all .2s;
+}
+.rep-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.rep-card-img {
+  height: 160px; background: #F8F8F8;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; position: relative;
+  border-bottom: 1px solid var(--gray-3);
+}
+.rep-card-img img { width: 100%; height: 100%; object-fit: cover; }
+.rep-card-img .no-img {
+  width: calc(100% - 20px); height: calc(100% - 16px);
+  border: 2px dashed var(--gray-3); border-radius: 8px;
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 5px; background: #fff;
+}
+.rep-card-img .no-img .ni-icon { font-size: 22px; }
+.rep-card-img .no-img .ni-txt { font-size: 10px; color: var(--gray-4); font-weight: 500; }
+.rep-card-body { padding: 12px 14px; }
+.rci-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.rci-date { font-size: 11px; color: var(--gray-4); }
+.rci-badge { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
+.badge-wait { background: #FEF9C3; color: #854D0E; }
+.badge-prog { background: #DBEAFE; color: #1E40AF; }
+.badge-done { background: #DCFCE7; color: #166634; }
+.badge-fwd  { background: #F3E8FF; color: #6D28D9; }
+.rci-problem { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rci-detail  { font-size: 11px; color: var(--gray-5); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rci-fix { font-size: 11px; color: var(--green); font-weight: 500; }
+
+.pagi { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 24px; padding-bottom: 40px; }
+.pagi-lbl { font-size: 12px; color: var(--gray-4); }
+.pagi-d { width: 32px; height: 32px; border-radius: 6px; border: 1px solid var(--gray-3); background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; color: var(--gray-5); transition: all .15s; }
+.pagi-d.ac { background: var(--navy); border-color: var(--navy); color: #fff; }
+
+/* ซ่อน hero เดิม */
+.hero { display: none !important; }
+.car-sec { display: none !important; }
+
+/* loading skeleton */
+.skeleton { background: linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%); background-size: 200% 100%; animation: sk 1.4s infinite; border-radius: 6px; }
+@keyframes sk { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+@media(max-width:900px) {
+  .hero-right { display: none; }
+  .grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+
+.tab{padding:8px 18px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;border:none;background:var(--gray-2);color:var(--gray-5);font-family:inherit;transition:all .18s}
+.tab.ac{background:var(--navy);color:#fff}
+.pg-btn{width:34px;height:34px;border-radius:8px;border:1.5px solid var(--gray-3);background:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--gray-5);transition:all .18s;font-family:inherit}
+.pg-btn:hover{border-color:var(--navy);color:var(--navy)}
+.pg-btn:disabled{opacity:.35;cursor:default}
+.pg-num{width:34px;height:34px;border-radius:8px;border:1.5px solid var(--gray-3);background:#fff;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--gray-5);transition:all .18s;font-family:inherit}
+.pg-num:hover{border-color:var(--navy);color:var(--navy)}
+.pg-num.ac{background:var(--navy);border-color:var(--navy);color:#fff}
+
+.stat-box { transition: opacity .18s, transform .18s; }
+.stat-box:hover { opacity: .88; transform: scale(.98); }
+.stat-total-row { transition: opacity .18s; }
+.stat-total-row:hover { opacity: .88; }
+</style>
+</head>
+<body>
+<div id="toast"></div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-inner">
+    <div class="nav-logo">🎓 CMU Report <span>| รายงานปัญหามหาวิทยาลัย</span></div>
+    <div class="nav-spacer"></div>
+
+    <!-- คู่มือ → PDF (กดได้ตลอด) -->
+    <a class="nav-guide" href="#" onclick="openGuide(event)">📖 คู่มือการใช้งาน</a>
+
+    <!-- ข้อเสนอแนะ → Google Form (กดได้ตลอด) -->
+    <a class="nav-feedback" href="#" onclick="openFeedback(event)">💡 ข้อเสนอแนะ</a>
+
+    <!-- แจ้งปัญหา → ต้อง login -->
+    <button class="nav-report" onclick="goReport()">🚨 แจ้งปัญหา</button>
+
+    <!-- Avatar (แสดงหลัง login) -->
+    <button class="nav-login-btn" id="nav-login-btn" onclick="openAuth()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+      Log in
+    </button>
+    <div class="av-wrap" id="av-wrap" style="display:none">
+      <div class="av" id="av-el" onclick="toggleDD()">ก</div>
+      <div class="dd" id="dd-el">
+        <div class="dd-user">
+          <div class="dd-name" id="dd-name">ผู้ใช้งาน</div>
+          <div class="dd-email" id="dd-email">user@cmu.ac.th</div>
+        </div>
+        <div class="dd-item" onclick="openPanel('reports')"><span>📋</span> รายละเอียดการแจ้ง <span class="dd-badge" id="badge-report">0</span></div>
+        <div class="dd-item" onclick="openPanel('replies')"><span>💬</span> การตอบกลับ <span class="dd-badge" style="background:var(--blue)" id="badge-reply">0</span></div>
+        <div class="dd-div"></div>
+        <div class="dd-item dd-out" onclick="doLogout()"><span>🚪</span> ออกจากระบบ</div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO + CAROUSEL (ตามดีไซน์ต้นแบบ) -->
+<div class="hero-carousel-wrap">
+
+  <!-- ซ้าย: หน้าโฆษณา -->
+  <div class="hero-left">
+    <button class="hc-arrow hc-prev" onclick="prevC()">&#8249;</button>
+    <div class="hc-slider">
+      <div class="hc-track" id="c-track">
+        <div class="hc-slide"><div class="hc-img-box"><div class="hc-img-placeholder"><span>🖼️</span><p>หน้าโฆษณา</p></div></div></div>
+        <div class="hc-slide"><div class="hc-img-box"><div class="hc-img-placeholder" style="background:linear-gradient(135deg,#E0F2FE,#BAE6FD)"><span>🎓</span><p>ข่าวสาร CMU</p></div></div></div>
+        <div class="hc-slide"><div class="hc-img-box"><div class="hc-img-placeholder" style="background:linear-gradient(135deg,#DCFCE7,#BBF7D0)"><span>🔔</span><p>แจ้งปัญหาได้ทันที</p></div></div></div>
+        <div class="hc-slide"><div class="hc-img-box"><div class="hc-img-placeholder" style="background:linear-gradient(135deg,#FEF3C7,#FDE68A)"><span>📌</span><p>ติดตามสถานะ</p></div></div></div>
+        <div class="hc-slide"><div class="hc-img-box"><div class="hc-img-placeholder" style="background:linear-gradient(135deg,#F3E8FF,#E9D5FF)"><span>✅</span><p>ดำเนินการรวดเร็ว</p></div></div></div>
+      </div>
+    </div>
+    <button class="hc-arrow hc-next" onclick="nextC()">&#8250;</button>
+    <div class="hc-dots" id="hc-dots">
+      <div class="hc-dot ac" onclick="goC(0)"></div>
+      <div class="hc-dot" onclick="goC(1)"></div>
+      <div class="hc-dot" onclick="goC(2)"></div>
+      <div class="hc-dot" onclick="goC(3)"></div>
+      <div class="hc-dot" onclick="goC(4)"></div>
+    </div>
+  </div>
+
+  <!-- ขวา: stat boxes -->
+  <div class="hero-right">
+    <!-- แถว 1 -->
+    <div class="stat-row">
+      <div class="stat-box sb-red" onclick="filterByStatus('รอดำเนินการ')" style="cursor:pointer" title="กรองรอรับเรื่อง">
+        <div class="stat-box-label">🕐 รอรับเรื่อง</div>
+        <div class="stat-box-val"><span id="sb-wait">—</span> <span style="font-size:13px;font-weight:500">(<span id="sb-wait-p">—</span>%)</span></div>
+      </div>
+      <div class="stat-box sb-yellow" onclick="filterByStatus('กำลังดำเนินการ')" style="cursor:pointer" title="กรองดำเนินการ">
+        <div class="stat-box-label">⚙️ ดำเนินการ</div>
+        <div class="stat-box-val"><span id="sb-prog">—</span> <span style="font-size:13px;font-weight:500">(<span id="sb-prog-p">—</span>%)</span></div>
+      </div>
+    </div>
+    <!-- แถว 2 -->
+    <div class="stat-row">
+      <div class="stat-box sb-blue" onclick="filterByStatus('ส่งต่อ')" style="cursor:pointer" title="กรองส่งต่อ">
+        <div class="stat-box-label">➡️ ส่งต่อ</div>
+        <div class="stat-box-val"><span id="sb-fwd">—</span> <span style="font-size:13px;font-weight:500">(<span id="sb-fwd-p">—</span>%)</span></div>
+      </div>
+      <div class="stat-box sb-green" onclick="filterByStatus('เสร็จแล้ว')" style="cursor:pointer" title="กรองเสร็จสิ้น">
+        <div class="stat-box-label">✅ เสร็จสิ้น</div>
+        <div class="stat-box-val"><span id="sb-done">—</span> <span style="font-size:13px;font-weight:500">(<span id="sb-done-p">—</span>%)</span></div>
+      </div>
+    </div>
+    <!-- แถวทั้งหมด -->
+    <div class="stat-total-row" onclick="filterByStatus('all')" style="cursor:pointer" title="ดูทั้งหมด">
+      <span class="lbl">📋 ทั้งหมด</span>
+      <span class="val"><span id="sb-total">—</span> (100%)</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- CONTENT SECTION -->
+<div style="max-width:1200px;margin:20px auto;padding:0 20px">
+  <!-- Tab Row -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+    <div style="display:flex;gap:4px;flex-wrap:wrap">
+      <button class="tab ac" data-status="all" onclick="setTab(this)">ทั้งหมด</button>
+      <button class="tab" data-status="รอดำเนินการ" onclick="setTab(this)">รอรับเรื่อง</button>
+      <button class="tab" data-status="กำลังดำเนินการ" onclick="setTab(this)">ดำเนินการ</button>
+      <button class="tab" data-status="ส่งต่อ" onclick="setTab(this)">ส่งต่อ</button>
+      <button class="tab" data-status="เสร็จแล้ว" onclick="setTab(this)">เสร็จสิ้น</button>
+    </div>
+    <button style="display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;border:1px solid var(--gray-3);background:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;box-shadow:0 1px 3px rgba(0,0,0,.06)">⚙️ ตัวกรอง</button>
+  </div>
+
+  <!-- Card Grid -->
+  <div id="card-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;min-height:200px"></div>
+
+  <!-- Pagination -->
+  <div id="pagi-wrap" style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:24px;padding-bottom:40px">
+    <span style="font-size:13px;font-weight:600;color:var(--gray-5);margin-right:4px">หน้า</span>
+    <button class="pg-btn" onclick="changePage(-1)" id="pg-prev">‹</button>
+    <div id="pg-numbers" style="display:flex;gap:5px"></div>
+    <button class="pg-btn" onclick="changePage(1)" id="pg-next">›</button>
+  </div>
+</div>
+
+<!-- AUTH OVERLAY -->
+<div id="auth-overlay" onclick="closeAuthClick(event)">
+  <div class="auth-modal">
+    <div class="auth-head">
+      <div class="logo">CMU REPORT</div>
+      <div class="ttl" id="auth-title">LOGIN</div>
+    </div>
+    <div class="auth-body">
+
+      <!-- STEP: Login -->
+      <div class="step ac" id="s-login">
+        <div class="step-ind"><span class="step-txt">เข้าสู่ระบบ</span><div class="sdots"><div class="sd ac"></div><div class="sd"></div><div class="sd"></div></div></div>
+        <div class="field fi"><span class="ico">📧</span><input type="email" id="l-email" placeholder="อีเมล (@cmu.ac.th)"></div>
+        <div class="field fi"><span class="ico">🔒</span><input type="password" id="l-pass" placeholder="Password"></div>
+        <div class="err-msg" id="l-err">อีเมลหรือรหัสผ่านไม่ถูกต้อง</div>
+        <span class="forgot" onclick="goStep('s-forgot')">Forgot Password?</span>
+        <button class="btn-main b-purple" id="l-btn" onclick="doLogin()">Log In Now</button>
+        <div class="divider">Login with Others</div>
+        <!-- Google Login → เปิดใน Chrome -->
+        <button class="btn-google" id="g-btn" onclick="doGoogleLogin()">
+          <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 8 2.9l5.7-5.7C34.5 6.9 29.5 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.9z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 19.1 12 24 12c3.1 0 5.8 1.1 8 2.9l5.7-5.7C34.5 6.9 29.5 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.1l-6.2-5.2C29.1 35.5 26.7 36 24 36c-5.2 0-9.7-3.3-11.3-8H5.9C9.3 36.9 16.1 44 24 44z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.3 5.7l6.2 5.2C41.1 36.1 44 30.5 44 24c0-1.3-.1-2.7-.4-3.9z"/></svg>
+          Login with Google
+          <span class="g-badge">เปิดใน Chrome</span>
+        </button>
+        <div class="auth-footer">ยังไม่มีบัญชี? <a onclick="goStep('s-email')">Create an account</a></div>
+      </div>
+
+      <!-- STEP: Forgot Password -->
+      <div class="step" id="s-forgot">
+        <div class="step-ind"><span class="step-txt">รีเซ็ตรหัสผ่าน</span></div>
+        <div style="text-align:center;margin-bottom:16px"><div style="font-size:13px;color:var(--gray-5)">กรอกอีเมลเพื่อรับลิงก์รีเซ็ตรหัสผ่าน</div></div>
+        <div class="field fi"><span class="ico">📧</span><input type="email" id="fp-email" placeholder="อีเมล (@cmu.ac.th)"></div>
+        <div class="err-msg" id="fp-err"></div>
+        <button class="btn-main b-blue" id="fp-btn" onclick="doForgotPassword()">ส่งลิงก์รีเซ็ต</button>
+        <div class="auth-footer"><a onclick="goStep('s-login')">← กลับเข้าสู่ระบบ</a></div>
+      </div>
+
+      <!-- STEP: Register Email -->
+      <div class="step" id="s-email">
+        <div class="step-ind"><span class="step-txt">สมัครสมาชิก 1/3</span><div class="sdots"><div class="sd ac"></div><div class="sd"></div><div class="sd"></div></div></div>
+        <div style="text-align:center;margin-bottom:16px"><div style="font-size:15px;font-weight:700;color:var(--navy)">Create an account</div><div style="font-size:12px;color:var(--gray-5);margin-top:3px">กรอกอีเมล CMU เพื่อรับลิงก์ยืนยัน</div></div>
+        <div class="field fi"><span class="ico">📧</span><input type="email" id="r-email" placeholder="อีเมล (@cmu.ac.th)"></div>
+        <div class="err-msg" id="r-err"></div>
+        <div style="text-align:center"><button class="btn-arrow" onclick="sendEmail()">→</button></div>
+        <div class="auth-footer"><a onclick="goStep('s-login')">← กลับเข้าสู่ระบบ</a></div>
+      </div>
+
+      <!-- STEP: Email Sent -->
+      <div class="step" id="s-sent">
+        <div class="step-ind"><span class="step-txt">ยืนยันอีเมล</span><div class="sdots"><div class="sd done"></div><div class="sd ac"></div><div class="sd"></div></div></div>
+        <div class="email-box">
+          <div class="ei">📧</div>
+          <h4>ส่งลิงก์ยืนยันแล้ว!</h4>
+          <p>ระบบส่งลิงก์ไปที่<br><span class="ehl" id="sent-to">—</span><br>กรุณาเปิดอีเมลและกดลิงก์ยืนยัน</p>
+        </div>
+        <div class="resend">ไม่ได้รับ? <span onclick="resendEmail()">ส่งอีกครั้ง</span></div>
+        <div class="auth-footer" style="margin-top:12px"><a onclick="goStep('s-email')">← แก้ไขอีเมล</a></div>
+      </div>
+
+      <!-- STEP: Set Password (หลังยืนยันอีเมล) -->
+      <div class="step" id="s-create">
+        <div class="step-ind"><span class="step-txt">สร้างบัญชี 3/3</span><div class="sdots"><div class="sd done"></div><div class="sd done"></div><div class="sd ac"></div></div></div>
+        <div style="text-align:center;margin-bottom:16px"><div style="font-size:15px;font-weight:700;color:var(--navy)">Create an account</div><div style="font-size:12px;color:var(--gray-5);margin-top:3px">ตั้งรหัสผ่านสำหรับบัญชีของคุณ</div></div>
+        <div class="field fi"><span class="ico">🔒</span><input type="password" id="c-pass" placeholder="Password (อย่างน้อย 6 ตัว)"></div>
+        <div class="field fi"><span class="ico">🔒</span><input type="password" id="c-conf" placeholder="Confirm Password"></div>
+        <div class="err-msg" id="c-err"></div>
+        <div style="text-align:center"><button class="btn-arrow" id="c-btn" onclick="doRegister()">→</button></div>
+      </div>
+
+      <!-- STEP: Success + Auto Login -->
+      <div class="step" id="s-success">
+        <div style="text-align:center;padding:10px 0">
+          <div style="font-size:48px;margin-bottom:12px">🎉</div>
+          <div style="font-size:17px;font-weight:700;color:var(--navy)">สมัครและเข้าสู่ระบบสำเร็จ!</div>
+          <div style="font-size:13px;color:var(--gray-5);margin-top:6px;line-height:1.6">กำลังพาไปหน้าแผนที่<br>เพื่อแจ้งปัญหา...</div>
+          <div style="margin-top:20px;display:flex;justify-content:center"><div class="spin" style="width:24px;height:24px;border-color:rgba(37,99,235,.3);border-top-color:var(--blue)"></div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- MY PANEL -->
+<div id="mp-overlay" onclick="closePanel(event)">
+  <div class="mp" onclick="event.stopPropagation()">
+    <div class="mp-head">
+      <h3>บัญชีของฉัน</h3>
+      <button class="close-x" onclick="closePanel()">✕</button>
+    </div>
+    <div class="mp-tabs">
+      <div class="mp-tab ac" id="mpt-reports" onclick="swTab('reports')">การแจ้ง (<span id="cnt-reports">0</span>)</div>
+      <div class="mp-tab" id="mpt-replies" onclick="swTab('replies')">การตอบกลับ (<span id="cnt-replies">0</span>)</div>
+    </div>
+    <div class="mp-con ac" id="mpc-reports">
+      <div style="text-align:center;padding:30px;color:var(--gray-4);font-size:13px">กำลังโหลด...</div>
+    </div>
+    <div class="mp-con" id="mpc-replies">
+      <div style="text-align:center;padding:30px;color:var(--gray-4);font-size:13px">กำลังโหลด...</div>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+<script>
+// ========== FIREBASE CONFIG ==========
+const firebaseConfig = {
+  apiKey: "AIzaSyDoWjCssd6l0lJtrR75dkrM53nqOmpb5WU",
+  authDomain: "cmu-report.firebaseapp.com",
+  projectId: "cmu-report",
+  storageBucket: "cmu-report.firebasestorage.app",
+  messagingSenderId: "745365199846",
+  appId: "1:745365199846:web:e3c6faa4996a0a92661427",
+  measurementId: "G-TLMT3RS3ZT"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const fbAuth = firebase.auth();
+const fbStorage = firebase.storage();
+const MAP_PAGE = 'index.html';
+const GUIDE_PDF = 'manual.pdf';
+const FEEDBACK_URL = '';
+
+// ========== STATE ==========
+let currentUser = null;
+let regEmail = '';
+// ci declared in carousel section below
+
+// ========== TOAST ==========
+function toast(msg, type='', dur=3000) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show' + (type ? ' ' + type : '');
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.className = '', dur);
+}
+
+// ========== GUIDE & FEEDBACK (กดได้ตลอด) ==========
+function openGuide(e) {
+  e.preventDefault();
+  if (!GUIDE_PDF || GUIDE_PDF === 'manual.pdf') {
+    toast('📄 จะนำ PDF คู่มือมาใส่เร็วๆ นี้', '', 2500); return;
+  }
+  window.open(GUIDE_PDF, '_blank');
+}
+function openFeedback(e) {
+  e.preventDefault();
+  if (!FEEDBACK_URL) {
+    toast('💡 จะนำ Google Form มาใส่เร็วๆ นี้', '', 2500); return;
+  }
+  window.open(FEEDBACK_URL, '_blank');
+}
+
+// ========== GOOGLE LOGIN → Chrome ==========
+async function doGoogleLogin() {
+  const btn = document.getElementById('g-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spin"></div> กำลังเชื่อมต่อ...';
+
+  try {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+    const result = await fbAuth.signInWithPopup(provider);
+    onLoginSuccess(result.user);
+  } catch (error) {
+    toast('❌ Google Login ไม่สำเร็จ: ' + error.message, 'er');
+    btn.disabled = false;
+    btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 48 48">...</svg> Login with Google <span class="g-badge">เปิดใน Chrome</span>`;
+  }
+}
+
+// ========== LOGIN ==========
+async function doLogin() {
+  const email = document.getElementById('l-email').value.trim();
+  const pass  = document.getElementById('l-pass').value;
+  const err   = document.getElementById('l-err');
+  const btn   = document.getElementById('l-btn');
+  err.classList.remove('show');
+
+  if (!email || !pass) { showErr(err, 'กรุณากรอกอีเมลและรหัสผ่าน'); return; }
+
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spin"></div> กำลังเข้าสู่ระบบ...';
+
+  try {
+    const result = await fbAuth.signInWithEmailAndPassword(email, pass);
+    btn.disabled = false;
+    btn.innerHTML = 'Log In Now';
+    onLoginSuccess(result.user);
+  } catch (error) {
+    btn.disabled = false;
+    btn.innerHTML = 'Log In Now';
+    showErr(err, 'อีเมลหรือรหัสผ่านไม่ถูกต้อง');
+  }
+}
+
+// ========== FORGOT PASSWORD ==========
+async function doForgotPassword() {
+  const email = document.getElementById('fp-email').value.trim();
+  const err   = document.getElementById('fp-err');
+  const btn   = document.getElementById('fp-btn');
+  err.classList.remove('show');
+
+  if (!email) { showErr(err, 'กรุณากรอกอีเมล'); return; }
+
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spin"></div> กำลังส่ง...';
+
+  try {
+    await fbAuth.sendPasswordResetEmail(email);
+    btn.disabled = false;
+    btn.innerHTML = 'ส่งลิงก์รีเซ็ต';
+    toast('📧 ส่งลิงก์รีเซ็ตไปที่ ' + email + ' แล้ว', 'ok');
+    goStep('s-login');
+  } catch (error) {
+    btn.disabled = false;
+    btn.innerHTML = 'ส่งลิงก์รีเซ็ต';
+    showErr(err, error.message);
+  }
+}
+
+// ========== REGISTER ==========
+async function sendEmail() {
+  const email = document.getElementById('r-email').value.trim();
+  const err   = document.getElementById('r-err');
+  err.classList.remove('show');
+
+  if (!email) { showErr(err, 'กรุณากรอกอีเมล'); return; }
+  if (!email.includes('@')) { showErr(err, 'รูปแบบอีเมลไม่ถูกต้อง'); return; }
+
+  regEmail = email;
+  // Firebase: ข้ามขั้นตอนส่งอีเมล ไปตั้งรหัสผ่านเลย
+  goStep('s-create');
+}
+
+async function resendEmail() {
+  if (regEmail) goStep('s-create');
+}
+
+async function doRegister() {
+  const pass  = document.getElementById('c-pass').value;
+  const conf  = document.getElementById('c-conf').value;
+  const err   = document.getElementById('c-err');
+  const btn   = document.getElementById('c-btn');
+  err.classList.remove('show');
+
+  if (pass.length < 6) { showErr(err, 'Password ต้องมีอย่างน้อย 6 ตัวอักษร'); return; }
+  if (pass !== conf)   { showErr(err, 'Password ไม่ตรงกัน'); return; }
+
+  btn.disabled = true;
+  btn.textContent = '⏳';
+
+  if (!regEmail) { showErr(err, 'ไม่พบอีเมล กรุณากลับไปกรอกอีเมลใหม่'); return; }
+
+  try {
+    const result = await fbAuth.createUserWithEmailAndPassword(regEmail, pass);
+    btn.disabled = false;
+    btn.textContent = '→';
+    goStep('s-success');
+    toast('✅ สมัครสมาชิกสำเร็จ!', 'ok');
+    setTimeout(() => {
+      onLoginSuccess(result.user);
+    }, 2000);
+  } catch (error) {
+    btn.disabled = false;
+    btn.textContent = '→';
+    if (error.code === 'auth/email-already-in-use') {
+      showErr(err, 'อีเมลนี้ถูกใช้งานแล้ว');
+    } else {
+      showErr(err, error.message);
+    }
+  }
+}
+
+// ========== ON LOGIN SUCCESS ==========
+function onLoginSuccess(user) {
+  currentUser = user;
+  const email = user.email || '';
+  const name  = user.displayName || email.split('@')[0];
+
+  document.getElementById('dd-name').textContent  = name;
+  document.getElementById('dd-email').textContent = email;
+  document.getElementById('av-el').textContent    = name.charAt(0).toUpperCase();
+  document.getElementById('av-wrap').style.display = 'flex';
+  const lb = document.getElementById('nav-login-btn'); if(lb) lb.style.display='none';
+
+  closeAuth();
+  toast('✅ ยินดีต้อนรับ ' + name, 'ok');
+
+  // โหลด reports ของ user
+  loadUserReports(user.uid);
+}
+
+// ========== LOGOUT ==========
+async function doLogout() {
+  // ปิด dropdown ก่อน
+  document.getElementById('dd-el').classList.remove('open');
+  toast('👋 กำลังออกจากระบบ...');
+  await fbAuth.signOut();
+  // reload กลับมาหน้าเดิมแบบ logged out
+  setTimeout(() => window.location.reload(), 1000);
+}
+
+
+
+
+
+
+
+// ========== LOAD USER REPORTS (จาก Firebase) ==========
+async function loadUserReports(userId) {
+  const snapshot = await db.collection('reports')
+    .where('user_id', '==', userId)
+    .orderBy('created_at', 'desc')
+    .get()
+    .catch(e => { console.error('loadUserReports error:', e); return null; });
+
+  if (!snapshot) return;
+
+  const reports = [];
+  snapshot.forEach(doc => {
+    const d = doc.data();
+    d.id = doc.id;
+    if (d.created_at && d.created_at.toDate) d.created_at = d.created_at.toDate().toISOString();
+    if (d.updated_at && d.updated_at.toDate) d.updated_at = d.updated_at.toDate().toISOString();
+    reports.push(d);
+  });
+
+  // นับ badge
+  const replies = reports.filter(r => r.reply);
+  document.getElementById('badge-report').textContent = reports.length;
+  document.getElementById('badge-reply').textContent  = replies.length;
+  document.getElementById('cnt-reports').textContent  = reports.length;
+  document.getElementById('cnt-replies').textContent  = replies.length;
+
+  // render reports
+  const rGrid = document.getElementById('mpc-reports');
+  rGrid.innerHTML = reports.length === 0
+    ? '<div style="text-align:center;padding:30px;color:var(--gray-4);font-size:13px">ยังไม่มีการแจ้งปัญหา</div>'
+    : reports.map(r => {
+        const sc = r.status==='เสร็จแล้ว'?'s-done':r.status==='กำลังดำเนินการ'?'s-active':'s-pending';
+        return `<div class="ri">
+          <div class="ri-top">
+            <div class="ri-title">${r.title||'ไม่มีชื่อ'}</div>
+            <span class="ri-s ${sc}">${r.status||'รอดำเนินการ'}</span>
+          </div>
+          <div class="ri-desc">${r.detail||'-'}</div>
+          <div class="ri-date">📅 ${new Date(r.created_at||Date.now()).toLocaleDateString('th-TH')} • ${r.category||''}</div>
+        </div>`;
+      }).join('');
+
+  // render replies
+  const repGrid = document.getElementById('mpc-replies');
+  repGrid.innerHTML = replies.length === 0
+    ? '<div style="text-align:center;padding:30px;color:var(--gray-4);font-size:13px">ยังไม่มีการตอบกลับ</div>'
+    : replies.map(r => `
+        <div class="rep-item">
+          <div class="rep-head">
+            <div class="rep-av">ช</div>
+            <div><div class="rep-name">ทีมงาน CMU</div><div style="font-size:10px;color:var(--gray-4)">Admin</div></div>
+            <div class="rep-time">${new Date(r.updated_at||Date.now()).toLocaleDateString('th-TH')}</div>
+          </div>
+          <div class="rep-msg">${r.reply}</div>
+          <div class="rep-ref">📋 อ้างอิง: ${r.title}</div>
+        </div>`).join('');
+}
+
+// ========== GO REPORT ==========
+function goReport() {
+  if (currentUser) {
+    window.location.href = MAP_PAGE;
+  } else {
+    // แสดง toast แจ้งเตือน แล้วเปิด modal login
+    showLoginWarning();
+  }
+}
+
+function showLoginWarning() {
+  // แสดง toast แจ้งเตือน
+  const t = document.getElementById('toast');
+  t.textContent = '🔐 กรุณา Log in ก่อนแจ้งปัญหา';
+  t.className = 'show er';
+  clearTimeout(t._t);
+  t._t = setTimeout(() => {
+    t.className = '';
+    // เปิด modal login หลัง toast หาย
+    openAuth();
+  }, 1800);
+}
+
+// ========== AUTH MODAL ==========
+function openAuth() {
+  document.getElementById('auth-overlay').classList.add('open');
+  goStep('s-login');
+}
+function closeAuth() { document.getElementById('auth-overlay').classList.remove('open'); }
+function closeAuthClick(e) { if (e.target === document.getElementById('auth-overlay')) closeAuth(); }
+
+function goStep(id) {
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('ac'));
+  document.getElementById(id).classList.add('ac');
+  const titles = {'s-login':'LOGIN','s-forgot':'RESET','s-email':'Create an account','s-sent':'Create an account','s-create':'Create an account','s-success':'สมัครสำเร็จ'};
+  document.getElementById('auth-title').textContent = titles[id] || 'CMU Report';
+}
+
+function showErr(el, msg) { el.textContent = msg; el.classList.add('show'); }
+
+// ========== DROPDOWN ==========
+function toggleDD() { document.getElementById('dd-el').classList.toggle('open'); }
+document.addEventListener('click', e => {
+  const w = document.getElementById('av-wrap');
+  if (w && !w.contains(e.target)) document.getElementById('dd-el').classList.remove('open');
+});
+
+// ========== MY PANEL ==========
+function openPanel(tab) {
+  document.getElementById('dd-el').classList.remove('open');
+  document.getElementById('mp-overlay').classList.add('open');
+  swTab(tab);
+}
+function closePanel(e) {
+  if (!e || e.target === document.getElementById('mp-overlay'))
+    document.getElementById('mp-overlay').classList.remove('open');
+}
+function swTab(tab) {
+  ['reports','replies'].forEach(t => {
+    document.getElementById('mpt-' + t).classList.toggle('ac', t === tab);
+    document.getElementById('mpc-' + t).classList.toggle('ac', t === tab);
+  });
+}
+
+// ========== NAV ==========
+function setNav(el) { /* nav links removed */ }
+function renderPagination(totalPages) {
+  const nums = document.getElementById('pg-numbers');
+  const prev = document.getElementById('pg-prev');
+  const next = document.getElementById('pg-next');
+  if (!nums) return;
+
+  prev.disabled = currentPage <= 1;
+  next.disabled = currentPage >= totalPages;
+
+  let html2 = '';
+  for (let i = 1; i <= totalPages; i++) {
+    if (totalPages <= 7 || i === 1 || i === totalPages || Math.abs(i - currentPage) <= 1) {
+      html2 += `<button class="pg-num${i===currentPage?' ac':''}" onclick="gotoPage(${i})">${i}</button>`;
+    } else if (Math.abs(i - currentPage) === 2) {
+      html2 += `<span style="display:flex;align-items:center;color:var(--gray-4);font-size:13px;padding:0 2px">…</span>`;
+    }
+  }
+  nums.innerHTML = html2;
+}
+
+function gotoPage(p) {
+  currentPage = p;
+  renderCards();
+  window.scrollTo({ top: document.getElementById('card-grid')?.offsetTop - 80 || 0, behavior: 'smooth' });
+}
+
+function changePage(dir) {
+  const total = Math.ceil(filteredCache.length / ITEMS_PER_PAGE);
+  gotoPage(Math.max(1, Math.min(total, currentPage + dir)));
+}
+
+function filterByStatus(status) {
+  // อัปเดต tab ให้ตรง
+  document.querySelectorAll('.tab').forEach(t => {
+    const match = status === 'all'
+      ? t.dataset.status === 'all'
+      : t.dataset.status === status;
+    t.classList.toggle('ac', match);
+  });
+  currentStatus = status;
+  currentPage = 1;
+  renderCards();
+  // scroll ลงไปที่การ์ด
+  const g = document.getElementById('card-grid');
+  if(g) g.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function setTab(el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('ac'));
+  el.classList.add('ac');
+}
+
+// ========== CAROUSEL ==========
+let ci = 0;
+const TOTAL_SLIDES = 5;
+function updC() {
+  document.getElementById('c-track').style.transform = `translateX(-${ci*100}%)`;
+  document.querySelectorAll('.hc-dot').forEach((d,i) => {
+    d.className = 'hc-dot' + (i===ci?' ac':'');
+  });
+}
+function prevC() { ci = (ci - 1 + TOTAL_SLIDES) % TOTAL_SLIDES; updC(); }
+function nextC() { ci = (ci + 1) % TOTAL_SLIDES; updC(); }
+function goC(i)  { ci = i; updC(); }
+setInterval(nextC, 4000);
+
+// ========== LOAD STATS ==========
+
+async function loadStats() {
+  try {
+    const snapshot = await db.collection('reports').orderBy('created_at', 'desc').get();
+    const data = [];
+    snapshot.forEach(doc => {
+      const d = doc.data();
+      d.id = doc.id;
+      if (d.created_at && d.created_at.toDate) d.created_at = d.created_at.toDate().toISOString();
+      if (d.updated_at && d.updated_at.toDate) d.updated_at = d.updated_at.toDate().toISOString();
+      data.push(d);
+    });
+
+    const total = data.length;
+    const wait  = data.filter(r => !r.status || r.status==='รอดำเนินการ').length;
+    const prog  = data.filter(r => r.status==='กำลังดำเนินการ').length;
+    const fwd   = data.filter(r => r.status==='ส่งต่อ').length;
+    const done  = data.filter(r => r.status==='เสร็จแล้ว').length;
+    const pct   = n => total ? Math.round(n/total*100) : 0;
+
+    const set = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
+    set('sb-wait', wait);   set('sb-wait-p', pct(wait));
+    set('sb-prog', prog);   set('sb-prog-p', pct(prog));
+    set('sb-fwd',  fwd);    set('sb-fwd-p',  pct(fwd));
+    set('sb-done', done);   set('sb-done-p', pct(done));
+    set('sb-total', total);
+
+    // ส่งข้อมูลไปแสดงการ์ด
+    loadCards(data);
+  } catch(e) { console.error('loadStats exception:', e); }
+}
+
+
+
+// ========== CARDS ==========
+let allReports = [];
+let currentStatus = 'all';
+let currentSort = 'newest';
+
+function loadCards(data) {
+  allReports = data || [];
+  renderCards();
+}
+
+const ITEMS_PER_PAGE = 12;
+let currentPage = 1;
+let filteredCache = [];
+
+function renderCards() {
+  const grid = document.getElementById('card-grid');
+  let filtered = currentStatus === 'all'
+    ? allReports
+    : allReports.filter(r => (r.status||'รอดำเนินการ') === currentStatus);
+
+  filtered = [...filtered].sort((a,b) => {
+    const da = new Date(a.created_at||0), db = new Date(b.created_at||0);
+    return currentSort === 'newest' ? db-da : da-db;
+  });
+
+  filteredCache = filtered;
+  const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
+  if (currentPage > totalPages) currentPage = 1;
+
+  renderPagination(totalPages);
+
+  const pageItems = filtered.slice((currentPage-1)*ITEMS_PER_PAGE, currentPage*ITEMS_PER_PAGE);
+
+  if (!pageItems.length) {
+    grid.innerHTML = `<div style="grid-column:span 4;text-align:center;padding:50px;color:var(--gray-4);font-size:13px">ไม่พบรายการ</div>`;
+    return;
+  }
+
+  grid.innerHTML = pageItems.map(r => {
+    const status = r.status || 'รอดำเนินการ';
+    const bc = status==='เสร็จแล้ว'?'badge-done':status==='กำลังดำเนินการ'?'badge-prog':status==='ส่งต่อ'?'badge-fwd':'badge-wait';
+    const imgHtml = r.image_url
+      ? `<img src="${r.image_url}" alt="รูปปัญหา">`
+      : `<div class="no-img"><span class="ni-icon">🖼️</span><span class="ni-txt">ใส่รูปภาพที่แจ้งมา</span></div>`;
+    const dateStr = r.created_at ? new Date(r.created_at).toLocaleDateString('th-TH',{day:'numeric',month:'short'}) : '—';
+    return `
+      <div class="rep-card">
+        <div class="rep-card-img">${imgHtml}</div>
+        <div class="rep-card-body">
+          <div class="rci-row">
+            <span class="rci-date">วันที่: ${dateStr}</span>
+            <span class="rci-badge ${bc}">${status}</span>
+          </div>
+          <div class="rci-problem">ปัญหา: ${r.category||r.title||'ไม่ระบุ'}</div>
+          <div class="rci-detail">รายละเอียด: ${r.detail||r.title||'-'}</div>
+          <div class="rci-fix">การแก้ไข: ${r.reply||'รอดำเนินการ'}</div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function renderPagination(totalPages) {
+  const nums = document.getElementById('pg-numbers');
+  const prev = document.getElementById('pg-prev');
+  const next = document.getElementById('pg-next');
+  if (!nums) return;
+
+  prev.disabled = currentPage <= 1;
+  next.disabled = currentPage >= totalPages;
+
+  let html2 = '';
+  for (let i = 1; i <= totalPages; i++) {
+    if (totalPages <= 7 || i === 1 || i === totalPages || Math.abs(i - currentPage) <= 1) {
+      html2 += `<button class="pg-num${i===currentPage?' ac':''}" onclick="gotoPage(${i})">${i}</button>`;
+    } else if (Math.abs(i - currentPage) === 2) {
+      html2 += `<span style="display:flex;align-items:center;color:var(--gray-4);font-size:13px;padding:0 2px">…</span>`;
+    }
+  }
+  nums.innerHTML = html2;
+}
+
+function gotoPage(p) {
+  currentPage = p;
+  renderCards();
+  window.scrollTo({ top: document.getElementById('card-grid')?.offsetTop - 80 || 0, behavior: 'smooth' });
+}
+
+function changePage(dir) {
+  const total = Math.ceil(filteredCache.length / ITEMS_PER_PAGE);
+  gotoPage(Math.max(1, Math.min(total, currentPage + dir)));
+}
+
+function filterByStatus(status) {
+  // อัปเดต tab ให้ตรง
+  document.querySelectorAll('.tab').forEach(t => {
+    const match = status === 'all'
+      ? t.dataset.status === 'all'
+      : t.dataset.status === status;
+    t.classList.toggle('ac', match);
+  });
+  currentStatus = status;
+  currentPage = 1;
+  renderCards();
+  // scroll ลงไปที่การ์ด
+  const g = document.getElementById('card-grid');
+  if(g) g.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function setTab(el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('ac'));
+  el.classList.add('ac');
+  currentStatus = el.dataset.status || 'all';
+  currentPage = 1;
+  renderCards();
+}
+
+function setSortAndRender(val) {
+  currentSort = val;
+  currentPage = 1;
+  renderCards();
+}
+
+// ========== SESSION CHECK (Firebase) ==========
+
+fbAuth.onAuthStateChanged(user => {
+  if (user) {
+    onLoginSuccess(user);
+  } else {
+    currentUser = null;
+    document.getElementById('av-wrap').style.display = 'none';
+    const lb = document.getElementById('nav-login-btn'); if(lb) lb.style.display='';
+  }
+});
+
+// ========== INIT ==========
+loadStats();
+setInterval(loadStats, 60000); // refresh ทุก 1 นาที
+</script>
+</body>
+</html>

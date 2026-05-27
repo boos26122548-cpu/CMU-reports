@@ -1,0 +1,170 @@
+body { margin: 0; padding: 0; height: 100vh; font-family: sans-serif; overflow: hidden; }
+#map { height: 100vh; width: 100vw; z-index: 1000; }
+
+/* 🏷️ CUSTOM CSS FOR FACULTY LABEL */
+.faculty-label {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    font-weight: bold;
+    color: #800020; /* สีแดงเข้ม */
+    font-size: 16px;
+    text-shadow: 2px 2px 2px rgba(255,255,255,0.8);
+    pointer-events: none; /* ป้องกันการคลิกโดนป้าย */
+}
+.faculty-label:before { border: none; }
+
+/* 🏷️ NO LABEL SCALE (กันป้ายขยายตามซูม) */
+.no-label-scale .leaflet-tooltip {
+    transform: none !important;
+    transform-origin: center center !important;
+}
+
+/* 🧾 POPUP REPORT FORM (Left Side) - อัปเกรดความสวยงาม */
+.report-popup-form {
+    position: fixed;
+    top: 50%;
+    left: 20px; /* ขยับออกจากขอบซ้ายนิดนึงให้มีพื้นที่หายใจ */
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.95); /* พื้นหลังขาวโปร่งแสงนิดๆ */
+    backdrop-filter: blur(8px); /* เบลอแผนที่ด้านหลัง (ดูแพงขึ้นทันที) */
+    padding: 25px;
+    z-index: 9999; 
+    border-radius: 16px; /* ขอบโค้งมนกว่าเดิม */
+    width: 320px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15); /* เพิ่มเงานุ่มๆ ให้ดูลอยขึ้นมาจริงๆ */
+    display: flex;
+    flex-direction: column;
+    border: 1px solid rgba(255,255,255,0.5); /* เส้นขอบขาวบางๆ */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.popup-form-content {
+    position: relative;
+}
+
+.popup-form-content h4 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 18px;
+    text-align: center;
+}
+
+/* ปุ่ม X ปิดหน้าต่าง */
+.close-popup {
+    position: absolute;
+    top: -15px;
+    right: -10px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #aaa;
+    line-height: 1;
+    transition: 0.2s;
+}
+
+.close-popup:hover {
+    color: #ff4d4f; /* เอาเมาส์ชี้แล้วเปลี่ยนเป็นสีแดง */
+    transform: scale(1.1);
+}
+
+/* จัดรูปแบบช่องกรอกข้อมูล */
+.report-popup-form select, 
+.report-popup-form input[type="text"], 
+.report-popup-form textarea {
+    width: 100%; 
+    padding: 12px; 
+    margin-top: 5px; 
+    margin-bottom: 15px; 
+    border-radius: 8px; 
+    border: 1px solid #ddd; 
+    background: #f9f9f9;
+    font-family: inherit;
+    box-sizing: border-box; 
+    transition: all 0.3s;
+    
+    /* 👇 เติมบรรทัดนี้เข้าไปเพื่อล็อกไม่ให้ช่องรายละเอียดถูกดึงยืดได้ 👇 */
+    resize: none; 
+}
+/* เวลาคลิกช่องกรอก ให้มีเอฟเฟกต์สีฟ้า */
+.report-popup-form select:focus, 
+.report-popup-form input[type="text"]:focus, 
+.report-popup-form textarea:focus {
+    border-color: #007bff;
+    outline: none;
+    background: #fff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+}
+
+.report-popup-form input[type="file"] {
+    margin-bottom: 15px;
+    font-size: 13px;
+    color: #555;
+}
+
+/* จัดรูปแบบปุ่ม */
+.report-popup-form button { 
+    background: #007bff; 
+    color: white; 
+    border: none; 
+    padding: 12px; 
+    border-radius: 8px; 
+    font-weight: bold; 
+    cursor: pointer; 
+    width: 100%; 
+    margin-bottom: 10px; 
+    transition: background 0.3s;
+    font-size: 15px;
+}
+
+.report-popup-form button:hover {
+    background: #0056b3;
+}
+
+.report-popup-form button#gpsBtn { 
+    background: #28a745; 
+    margin-bottom: 15px; 
+}
+
+.report-popup-form button#gpsBtn:hover { 
+    background: #218838; 
+}
+/* 👑 ADMIN CONTROLS Container (Top Right) */
+.admin-controls-container {
+    z-index: 2000;
+}
+
+.admin-login-controls, .admin-dashboard-controls {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    width: 250px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.admin-login-content, .admin-dashboard-content {
+    position: relative;
+}
+
+.close-admin {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #888;
+}
+
+.close-admin:hover {
+    color: #333;
+}
+
+.admin-login-controls input, .admin-dashboard-controls input {
+    width: 100%;
+    margin-bottom: 5px;
+}
