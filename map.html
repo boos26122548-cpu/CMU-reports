@@ -1,0 +1,108 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>CMU Report</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="style.css"/>
+    <style>
+        /* ๐”” TOAST NOTIFICATION */
+        #toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #222;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            display: none;
+            z-index: 9999;
+            font-family: sans-serif;
+        }
+    </style>
+</head>
+<body>
+
+  <div id="toast"></div>
+
+  <div id="adminControls" class="admin-controls-container" style="display: none;">
+      <div id="adminLoginBox" class="admin-login-controls">
+          <div class="admin-login-content">
+              <span class="close-admin" onclick="toggleAdminControls()">ร—</span>
+              <h4>Admin Login</h4>
+              <input id="adminEmail" placeholder="email">
+              <input id="adminPassword" type="password" placeholder="password">
+              <button onclick="login()">Login</button>
+              <p id="loginStatus">เธขเธฑเธเนเธกเนเนเธ”เน login</p>
+          </div>
+      </div>
+
+      <div id="adminDashboardBox" class="admin-dashboard-controls" style="display: none;">
+          <div class="admin-dashboard-content">
+              <h4>Admin Dashboard</h4>
+              <p>เธขเธดเธเธ”เธตเธ•เนเธญเธเธฃเธฑเธ เนเธญเธ”เธกเธดเธ</p>
+              <button onclick="loadTable()">๐” Refresh เธ•เธฒเธฃเธฒเธ</button>
+              <button onclick="logout()">Logout</button>
+          </div>
+      </div>
+  </div>
+
+  <button id="toggleAdminBtn" onclick="toggleAdminControls()" style="position: absolute; top: 10px; right: 10px; z-index: 2000; padding: 5px 10px; background: #333; color: white; border: none; border-radius: 5px; cursor: pointer; display: none;">
+      ๐” Admin
+  </button>
+
+  <div id="map"></div>
+
+  <div id="reportPopup" class="report-popup-form" style="display: none;">
+    <div class="popup-form-content">
+      <span class="close-popup" onclick="hideReportPopup()">ร—</span>
+      <h4>เนเธเนเธเธเธฑเธเธซเธฒ (เธซเธฅเธฑเธเธเธฒเธเธเธฑเธเธซเธกเธธเธ”เธชเธณเน€เธฃเนเธ)</h4>
+      <label for="category">๐ท๏ธ เธซเธกเธงเธ”เธซเธกเธนเนเธเธฑเธเธซเธฒ:</label>
+      <select id="category">
+        <option value="๐’ก เนเธเธเนเธฒ / เธซเธฅเธญเธ”เนเธ">๐’ก เนเธเธเนเธฒ / เธซเธฅเธญเธ”เนเธเธเธฒเธ”</option>
+        <option value="๐ข เธญเธฒเธเธฒเธฃ / เนเธญเธฃเนเธซเนเธญเธเน€เธฃเธตเธขเธ">๐ข เธญเธฒเธเธฒเธฃ / เนเธญเธฃเน / เธญเธธเธเธเธฃเธ“เนเธซเนเธญเธเน€เธฃเธตเธขเธ</option>
+        <option value="๐’ง เธซเนเธญเธเธเนเธณ / เธ—เนเธญเธเธฃเธฐเธเธฒ">๐’ง เธซเนเธญเธเธเนเธณ / เธ—เนเธญเธเธฃเธฐเธเธฒ</option>
+        <option value="๐ฃ๏ธ เธ–เธเธ / เธ—เธตเนเธเธญเธ”เธฃเธ–">๐ฃ๏ธ เธ–เธเธ / เธ—เธฒเธเน€เธ”เธดเธ / เธ—เธตเนเธเธญเธ”เธฃเธ–</option>
+        <option value="๐—‘๏ธ เธเธขเธฐ / เธเธงเธฒเธกเธชเธฐเธญเธฒเธ”">๐—‘๏ธ เธเธขเธฐ / เธเธงเธฒเธกเธชเธฐเธญเธฒเธ”เธเธทเนเธเธ—เธตเน</option>
+        <option value="๐ เธญเธดเธเน€เธ—เธญเธฃเนเน€เธเนเธ• / Wi-Fi">๐ เธญเธดเธเน€เธ—เธญเธฃเนเน€เธเนเธ• / Wi-Fi</option>
+        <option value="๐ถ เธชเธฑเธ•เธงเนเธเธฃเธเธฑเธ” / เธชเธฑเธ•เธงเนเธกเธตเธเธดเธฉ">๐ถ เธชเธฑเธ•เธงเนเธเธฃเธเธฑเธ” / เธชเธฑเธ•เธงเนเธกเธตเธเธดเธฉ</option>
+        <option value="โ“ เธญเธทเนเธเน">โ“ เธญเธทเนเธเน</option>
+      </select>
+
+      <input type="text" id="title" placeholder="เธเธฑเธเธซเธฒเธญเธฐเนเธฃ (เน€เธเนเธ เนเธญเธฃเนเนเธกเนเน€เธขเนเธ)"/>
+      <textarea id="detail" placeholder="เธฃเธฒเธขเธฅเธฐเน€เธญเธตเธขเธ” (เน€เธเนเธ เธญเนเธฒเธเน€เน€เธเนเธงเธซเธฃเธทเธญเธเธทเนเธญเธเธ“เธฐ)"></textarea>
+      
+      <input type="file" id="imageInput" accept="image/*"/>
+      
+      <button type="button" id="gpsBtn" onclick="getUserLocation()">๐“ เนเธเนเธ•เธณเนเธซเธเนเธเธเธฑเธเธเธธเธเธฑเธเธเธญเธเธเธฑเธ</button>
+      <button id="submitBtn">เนเธเนเธเธเธฑเธเธซเธฒ</button>
+    </div>
+  </div>
+
+  <div id="adminPanel" style="display: none;">
+      <h4>๐“ Admin Dashboard (เธ•เธฒเธฃเธฒเธเธฃเธฒเธขเธเธฒเธ)</h4>
+      <button onclick="loadTable()">๐” Refresh</button>
+      <table border="1">
+          <thead>
+              <tr>
+                  <th>Title</th>
+                  <th>Action</th>
+              </tr>
+          </thead>
+          <tbody id="reportTable"></tbody>
+      </table>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- Local Storage Mock Firebase (เธเธธเธ“เธชเธฒเธกเธฒเธฃเธ–เน€เธญเธฒเธเธญเธกเน€เธกเธเธ•เนเธเธญเธเธเธฃเธดเธเธญเธญเธเนเธ”เนเธซเธฒเธเธ•เนเธญเธเธเธฒเธฃเธเธฅเธฑเธเนเธเนเธเน Firebase เธเธฃเธดเธ) -->
+  <script src="mock-firebase.js"></script>
+  <!--
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+  -->
+  <script src="script.js"></script>
+
+</body>
+</html>
