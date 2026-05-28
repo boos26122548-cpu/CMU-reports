@@ -35,6 +35,16 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 let selectedLat = null;
 let selectedLng = null;
 
+// ไอคอนสีน้ำเงินสำหรับปักหมุดชั่วคราว (แก้บั๊ก Leaflet หาไฟล์รูปหมุดเริ่มต้นไม่เจอในมือถือ/iPad)
+const blueIcon = L.icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
+
 // 🧠 MARKERS
 let markerGroup = L.layerGroup().addTo(map);
 
@@ -94,7 +104,8 @@ map.on('click', (e) => {
   if (tempMarker) map.removeLayer(tempMarker);
 
   tempMarker = L.marker([selectedLat, selectedLng], {
-    draggable: true
+    draggable: true,
+    icon: blueIcon
   }).addTo(map);
   
   showReportPopup(); 
@@ -346,7 +357,8 @@ function getUserLocation() {
       if (tempMarker) map.removeLayer(tempMarker);
 
       tempMarker = L.marker([selectedLat, selectedLng], {
-        draggable: true 
+        draggable: true,
+        icon: blueIcon
       }).addTo(map);
 
       map.setView([selectedLat, selectedLng], 17); 
@@ -442,7 +454,8 @@ function getUserLocationMobile() {
       if (tempMarker) map.removeLayer(tempMarker);
 
       tempMarker = L.marker([selectedLat, selectedLng], {
-        draggable: true 
+        draggable: true,
+        icon: blueIcon
       }).addTo(map);
 
       map.setView([selectedLat, selectedLng], 17); 
