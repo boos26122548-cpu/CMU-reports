@@ -793,6 +793,7 @@ const FEEDBACK_URL = '';
 
 // ========== STATE ==========
 let currentUser = null;
+let isAdminUser = false;
 let regEmail = '';
 let currentPanelReports = [];
 let currentManagingId = null;
@@ -950,7 +951,7 @@ function onLoginSuccess(user) {
   currentUser = user;
   const email = user.email || '';
   const name  = user.displayName || email.split('@')[0];
-  const isAdminUser = email === 'cmu-admin@cmu.ac.th';
+  isAdminUser = email === 'cmu-admin@cmu.ac.th';
   const showAsAdmin = isAdminUser && isAdminView;
 
   document.getElementById('dd-name').textContent  = name + (showAsAdmin ? ' (Admin)' : (isAdminUser ? ' (User View)' : ''));
@@ -1165,7 +1166,7 @@ async function loadUserReports(userId) {
     reports.push(d);
   });
 
-  const displayReports = isAdminUser 
+  const displayReports = showAsAdmin 
     ? reports.filter(r => r.status !== 'เสร็จแล้ว') 
     : reports;
 
@@ -1754,6 +1755,7 @@ fbAuth.onAuthStateChanged(user => {
     onLoginSuccess(user);
   } else {
     currentUser = null;
+    isAdminUser = false;
     document.getElementById('av-wrap').style.display = 'none';
     const lb = document.getElementById('nav-login-btn'); if(lb) lb.style.display='';
   }
