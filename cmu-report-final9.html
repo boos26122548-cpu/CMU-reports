@@ -356,6 +356,59 @@ body{font-family:'IBM Plex Sans Thai',sans-serif;background:#F0F4F8;color:var(--
 .stat-box:hover { opacity: .88; transform: scale(.98); }
 .stat-total-row { transition: opacity .18s; }
 .stat-total-row:hover { opacity: .88; }
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media (max-width: 640px) {
+  /* Navbar */
+  .nav-inner { padding: 0 12px; height: 50px; gap: 6px; }
+  .nav-logo { font-size: 14px; margin-right: 0; }
+  .nav-logo span { display: none; }          /* ซ่อน "| รายงานปัญหา..." */
+  .nav-guide { display: none !important; }   /* ซ่อนปุ่มคู่มือ */
+  .nav-feedback { display: none !important; }/* ซ่อนปุ่มข้อเสนอแนะ */
+  .nav-report { padding: 7px 12px; font-size: 12px; }
+  .nav-login-btn { padding: 7px 12px; font-size: 12px; }
+
+  /* Hero carousel — stack แนวตั้ง */
+  .hero-carousel-wrap {
+    flex-direction: column;
+    padding: 12px;
+    gap: 12px;
+  }
+  .hero-left { min-height: 180px; }
+  .hc-slider { min-height: 180px; }
+  .hc-img-placeholder { min-height: 180px; font-size: 32px; }
+  .hero-right { max-width: 100%; flex-direction: column; }
+  .stat-row { gap: 8px; }
+  .stat-box { height: 60px; padding: 10px 14px; border-radius: 30px; }
+  .stat-box-label { font-size: 12px; }
+  .stat-box-val { font-size: 16px; }
+  .stat-total-row { height: 50px; padding: 10px 16px; }
+  .stat-total-row .lbl { font-size: 14px; }
+  .stat-total-row .val { font-size: 17px; }
+
+  /* Content area */
+  .content { padding: 0 12px; margin: 14px auto; }
+  .tab-row { flex-direction: column; align-items: flex-start; }
+  .tabs { flex-wrap: wrap; }
+  .tab { padding: 6px 12px; font-size: 12px; }
+
+  /* Cards — 2 คอลัมน์บนมือถือ */
+  .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .rep-card-img { height: 120px; }
+  .rep-card-body { padding: 10px; }
+  .rci-problem { font-size: 11px; }
+  .rci-detail  { font-size: 10px; }
+
+  /* My Panel — full width บนมือถือ */
+  #mp-overlay { padding: 54px 0 0; align-items: flex-end; justify-content: center; }
+  .mp { width: 100%; border-radius: 16px 16px 0 0; max-height: 88vh; }
+
+  /* Auth modal */
+  .auth-modal { border-radius: 16px 16px 0 0; max-width: 100%; }
+  #auth-overlay { align-items: flex-end; padding: 0; }
+  .auth-head { padding: 20px 24px 16px; }
+  .auth-body { padding: 20px 24px; }
+}
 </style>
 </head>
 <body>
