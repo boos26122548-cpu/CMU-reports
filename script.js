@@ -375,8 +375,8 @@ function getUserLocation() {
       gpsButton.disabled = false;
     },
     {
-      enableHighAccuracy: true, 
-      timeout: 8000,            
+      enableHighAccuracy: false, 
+      timeout: 10000,            
       maximumAge: 0             
     }
   );
@@ -472,8 +472,8 @@ function getUserLocationMobile() {
       mobileGpsBtn.disabled = false;
     },
     {
-      enableHighAccuracy: true, 
-      timeout: 8000,            
+      enableHighAccuracy: false, 
+      timeout: 10000,            
       maximumAge: 0             
     }
   );
