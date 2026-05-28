@@ -19,7 +19,7 @@ body{font-family:'IBM Plex Sans Thai',sans-serif;background:#F0F4F8;color:var(--
 
 /* NAVBAR */
 .navbar{background:var(--navy);box-shadow:var(--shadow-md);position:sticky;top:0;z-index:200}
-.nav-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;padding:0 20px;height:54px;gap:4px}
+.nav-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;padding:0 20px;height:54px;gap:10px}
 .nav-logo{font-size:17px;font-weight:700;color:#fff;margin-right:20px;white-space:nowrap;display:flex;align-items:center;gap:8px}
 .nav-logo span{opacity:.6;font-weight:400;font-size:12px}
 .nav-link{padding:7px 14px;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:none;color:rgba(255,255,255,.7);transition:all .18s;white-space:nowrap;font-family:inherit}
@@ -31,10 +31,10 @@ body{font-family:'IBM Plex Sans Thai',sans-serif;background:#F0F4F8;color:var(--
 .nav-feedback{display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:#F59E0B;color:#fff;transition:all .18s;white-space:nowrap;font-family:inherit;text-decoration:none}
 .nav-feedback:hover{background:#D97706}
 .nav-login-btn{display:flex;align-items:center;gap:6px;padding:7px 16px;border-radius:6px;background:rgba(255,255,255,.12);color:#fff;border:1.5px solid rgba(255,255,255,.35);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .18s;white-space:nowrap}.nav-login-btn:hover{background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.6)}
-.nav-report{padding:8px 18px;border-radius:6px;background:var(--red);color:#fff;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all .18s;font-family:inherit;margin-left:8px}
+.nav-report{padding:8px 18px;border-radius:6px;background:var(--red);color:#fff;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all .18s;font-family:inherit}
 .nav-report:hover{background:#DC2626;transform:translateY(-1px);box-shadow:0 4px 12px rgba(239,68,68,.35)}
 /* avatar */
-.av-wrap{position:relative;margin-left:8px}
+.av-wrap{position:relative}
 .av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#7C3AED,#2563EB);color:#fff;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid rgba(255,255,255,.3);transition:all .18s}
 .av:hover{border-color:#fff}
 .dd{position:absolute;top:calc(100% + 10px);right:0;background:#fff;border:1px solid var(--gray-3);border-radius:var(--rl);box-shadow:var(--shadow-lg);min-width:230px;padding:8px;z-index:300;display:none;animation:fdDown .18s ease}
@@ -180,9 +180,10 @@ body{font-family:'IBM Plex Sans Thai',sans-serif;background:#F0F4F8;color:var(--
 .ri-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px}
 .ri-title{font-size:13px;font-weight:700}
 .ri-s{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap}
-.s-pending{background:#FEF9C3;color:#854D0E}
-.s-active{background:#DBEAFE;color:#1E40AF}
+.s-pending{background:#FEE2E2;color:#991B1B}
+.s-active{background:#FEF9C3;color:#854D0E}
 .s-done{background:#DCFCE7;color:#166534}
+.s-fwd{background:#DBEAFE;color:#1E40AF}
 .ri-desc{font-size:11px;color:var(--gray-5);line-height:1.6;margin-bottom:6px}
 .ri-date{font-size:10px;color:var(--gray-4)}
 .rep-item{border:1px solid var(--gray-3);border-radius:var(--r);padding:14px;margin-bottom:10px}
@@ -245,35 +246,38 @@ body{font-family:'IBM Plex Sans Thai',sans-serif;background:#F0F4F8;color:var(--
 .hc-dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(0,0,0,.25); cursor: pointer; transition: all .2s; }
 .hc-dot.ac { background: var(--navy); width: 18px; border-radius: 4px; }
 
-/* ฝั่งขวา: stat boxes */
 .hero-right {
-  flex: 1; display: flex; flex-direction: column; gap: 8px; justify-content: center;
+  flex: 1; display: flex; flex-direction: column; gap: 10px; justify-content: center;
   min-width: 0; max-width: 420px;
 }
-.stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .stat-box {
-  border-radius: 40px; padding: 10px 20px;
-  display: flex; flex-direction: column; gap: 2px;
-  cursor: default; height: 52px; justify-content: center;
+  border-radius: 40px; padding: 12px 20px;
+  display: flex; flex-direction: column; gap: 4px;
+  cursor: default; height: 68px; justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  border: 1px solid rgba(0,0,0,0.02);
 }
-.stat-box-label { font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
-.stat-box-val { font-size: 18px; font-weight: 800; text-align: center; margin-top: 2px; }
+.stat-box-label { font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.stat-box-val { font-size: 19px; font-weight: 800; text-align: center; margin-top: 1px; display: flex; align-items: center; justify-content: center; gap: 4px; }
 
 /* สีตามดีไซน์ */
-.sb-red   { background: #F87171; color: #fff; }
+.sb-red   { background: #F87171; color: #1A1A1A; }
 .sb-yellow { background: #FACC15; color: #1A1A1A; }
-.sb-blue  { background: #60A5FA; color: #fff; }
-.sb-green { background: #4ADE80; color: #166534; }
+.sb-blue  { background: #60A5FA; color: #1A1A1A; }
+.sb-green { background: #4ADE80; color: #1A1A1A; }
 /* แถวทั้งหมด */
 .stat-total-row {
   background: #DDD6FE; border-radius: 40px;
-  padding: 10px 20px; display: flex;
-  align-items: center; justify-content: space-between;
-  gap: 12px; height: 52px;
+  padding: 12px 24px; display: flex;
+  align-items: center; justify-content: center;
+  gap: 16px; height: 56px;
   width: 100%;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  border: 1px solid rgba(0,0,0,0.02);
 }
-.stat-total-row .lbl { font-size: 12px; font-weight: 700; color: #4C1D95; display: flex; align-items: center; gap: 5px; }
-.stat-total-row .val { font-size: 18px; font-weight: 800; color: #1A1A1A; }
+.stat-total-row .lbl { font-size: 16px; font-weight: 800; color: #4C1D95; display: flex; align-items: center; gap: 5px; }
+.stat-total-row .val { font-size: 20px; font-weight: 800; color: #1A1A1A; }
 
 /* CONTENT */
 
@@ -310,10 +314,12 @@ body{font-family:'IBM Plex Sans Thai',sans-serif;background:#F0F4F8;color:var(--
 .rci-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
 .rci-date { font-size: 11px; color: var(--gray-4); }
 .rci-badge { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
-.badge-wait { background: #FEF9C3; color: #854D0E; }
-.badge-prog { background: #DBEAFE; color: #1E40AF; }
+.badge-wait { background: #FEE2E2; color: #991B1B; }
+.badge-prog { background: #FEF9C3; color: #854D0E; }
 .badge-done { background: #DCFCE7; color: #166634; }
-.badge-fwd  { background: #F3E8FF; color: #6D28D9; }
+.badge-fwd  { background: #DBEAFE; color: #1E40AF; }
+.card-status-badge { position: absolute !important; top: 10px !important; right: 10px !important; z-index: 5; box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
+.rci-category-badge { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 20px; background: #F3F4F6; color: #4B5563; border: 1px solid #E5E7EB; max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .rci-problem { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .rci-detail  { font-size: 11px; color: var(--gray-5); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .rci-fix { font-size: 11px; color: var(--green); font-weight: 500; }
@@ -383,8 +389,12 @@ body{font-family:'IBM Plex Sans Thai',sans-serif;background:#F0F4F8;color:var(--
           <div class="dd-email" id="dd-email">user@cmu.ac.th</div>
         </div>
         <div class="dd-item" onclick="openPanel('reports')"><span>📋</span> รายละเอียดการแจ้ง <span class="dd-badge" id="badge-report">0</span></div>
-        <div class="dd-item" onclick="openPanel('replies')"><span>💬</span> การตอบกลับ <span class="dd-badge" style="background:var(--blue)" id="badge-reply">0</span></div>
-        <div class="dd-div"></div>
+        <div class="dd-item" onclick="openPanel('replies')" style="display: none !important;"><span>💬</span> การตอบกลับ <span class="dd-badge" style="background:var(--blue)" id="badge-reply">0</span></div>
+        
+        <!-- DYNAMIC CATEGORY BOX FOR ADMIN -->
+        <div id="dd-cat-box" style="display:none; border-top:1.5px solid var(--gray-2); margin: 6px 0; padding-top: 6px; flex-direction:column; gap:2px;"></div>
+
+        <div class="dd-div" style="display: none !important;"></div>
         <div class="dd-item dd-out" onclick="doLogout()"><span>🚪</span> ออกจากระบบ</div>
       </div>
     </div>
@@ -420,30 +430,30 @@ body{font-family:'IBM Plex Sans Thai',sans-serif;background:#F0F4F8;color:var(--
   <div class="hero-right">
     <!-- แถว 1 -->
     <div class="stat-row">
-      <div class="stat-box sb-red" onclick="filterByStatus('รอดำเนินการ')" style="cursor:pointer" title="กรองรอรับเรื่อง">
-        <div class="stat-box-label">🕐 รอรับเรื่อง</div>
-        <div class="stat-box-val"><span id="sb-wait">—</span> <span style="font-size:13px;font-weight:500">(<span id="sb-wait-p">—</span>%)</span></div>
+      <div class="stat-box sb-red" onclick="filterByStatus('รอรับเรื่อง')" style="cursor:pointer" title="กรองรอรับเรื่อง">
+        <div class="stat-box-label">รอรับเรื่อง</div>
+        <div class="stat-box-val"><span id="sb-wait">—</span> <span style="font-size:13px;font-weight:500;margin-left:4px;">(<span id="sb-wait-p">—</span>%)</span></div>
       </div>
       <div class="stat-box sb-yellow" onclick="filterByStatus('กำลังดำเนินการ')" style="cursor:pointer" title="กรองดำเนินการ">
-        <div class="stat-box-label">⚙️ ดำเนินการ</div>
-        <div class="stat-box-val"><span id="sb-prog">—</span> <span style="font-size:13px;font-weight:500">(<span id="sb-prog-p">—</span>%)</span></div>
+        <div class="stat-box-label">ดำเนินการ</div>
+        <div class="stat-box-val"><span id="sb-prog">—</span> <span style="font-size:13px;font-weight:500;margin-left:4px;">(<span id="sb-prog-p">—</span>%)</span></div>
       </div>
     </div>
     <!-- แถว 2 -->
     <div class="stat-row">
       <div class="stat-box sb-blue" onclick="filterByStatus('ส่งต่อ')" style="cursor:pointer" title="กรองส่งต่อ">
-        <div class="stat-box-label">➡️ ส่งต่อ</div>
-        <div class="stat-box-val"><span id="sb-fwd">—</span> <span style="font-size:13px;font-weight:500">(<span id="sb-fwd-p">—</span>%)</span></div>
+        <div class="stat-box-label">ส่งต่อ</div>
+        <div class="stat-box-val"><span id="sb-fwd">—</span> <span style="font-size:13px;font-weight:500;margin-left:4px;">(<span id="sb-fwd-p">—</span>%)</span></div>
       </div>
       <div class="stat-box sb-green" onclick="filterByStatus('เสร็จแล้ว')" style="cursor:pointer" title="กรองเสร็จสิ้น">
-        <div class="stat-box-label">✅ เสร็จสิ้น</div>
-        <div class="stat-box-val"><span id="sb-done">—</span> <span style="font-size:13px;font-weight:500">(<span id="sb-done-p">—</span>%)</span></div>
+        <div class="stat-box-label">เสร็จสิ้น</div>
+        <div class="stat-box-val"><span id="sb-done">—</span> <span style="font-size:13px;font-weight:500;margin-left:4px;">(<span id="sb-done-p">—</span>%)</span></div>
       </div>
     </div>
     <!-- แถวทั้งหมด -->
     <div class="stat-total-row" onclick="filterByStatus('all')" style="cursor:pointer" title="ดูทั้งหมด">
-      <span class="lbl">📋 ทั้งหมด</span>
-      <span class="val"><span id="sb-total">—</span> (100%)</span>
+      <span class="lbl">ทั้งหมด</span>
+      <span class="val"><span id="sb-total">—</span> <span style="font-size:13px;font-weight:500;margin-left:4px;">(100%)</span></span>
     </div>
   </div>
 
@@ -455,12 +465,19 @@ body{font-family:'IBM Plex Sans Thai',sans-serif;background:#F0F4F8;color:var(--
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
     <div style="display:flex;gap:4px;flex-wrap:wrap">
       <button class="tab ac" data-status="all" onclick="setTab(this)">ทั้งหมด</button>
-      <button class="tab" data-status="รอดำเนินการ" onclick="setTab(this)">รอรับเรื่อง</button>
+      <button class="tab" data-status="รอรับเรื่อง" onclick="setTab(this)">รอรับเรื่อง</button>
       <button class="tab" data-status="กำลังดำเนินการ" onclick="setTab(this)">ดำเนินการ</button>
       <button class="tab" data-status="ส่งต่อ" onclick="setTab(this)">ส่งต่อ</button>
       <button class="tab" data-status="เสร็จแล้ว" onclick="setTab(this)">เสร็จสิ้น</button>
     </div>
-    <button style="display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;border:1px solid var(--gray-3);background:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;box-shadow:0 1px 3px rgba(0,0,0,.06)">⚙️ ตัวกรอง</button>
+    <div class="filter-dropdown-wrap" style="position:relative; display:inline-block;">
+      <button id="filter-btn" onclick="toggleFilterDD(event)" style="display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;border:1px solid var(--gray-3);background:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;box-shadow:0 1px 3px rgba(0,0,0,.06)">⚙️ ตัวกรอง</button>
+      <div id="filter-dd" class="dd" style="position:absolute; top:calc(100% + 6px); right:0; background:#fff; border:1px solid var(--gray-3); border-radius:10px; box-shadow:var(--shadow-lg); min-width:140px; padding:6px; z-index:300; display:none; animation:fdDown .18s ease; flex-direction:column; gap:4px;">
+        <div class="filter-dd-item" onclick="selectSort('all', 'ทั้งหมด')" style="padding:8px 12px; border-radius:6px; font-size:12.5px; font-weight:600; color:var(--gray-6); cursor:pointer; display:flex; align-items:center; gap:6px; transition:all 0.15s;" onmouseover="this.style.background='var(--gray-1)';" onmouseout="this.style.background='none';">📋 ทั้งหมด</div>
+        <div class="filter-dd-item" onclick="selectSort('newest', 'ล่าสุด')" style="padding:8px 12px; border-radius:6px; font-size:12.5px; font-weight:600; color:var(--gray-6); cursor:pointer; display:flex; align-items:center; gap:6px; transition:all 0.15s;" onmouseover="this.style.background='var(--gray-1)';" onmouseout="this.style.background='none';">✨ ล่าสุด</div>
+        <div class="filter-dd-item" onclick="selectSort('oldest', 'ก่อน')" style="padding:8px 12px; border-radius:6px; font-size:12.5px; font-weight:600; color:var(--gray-6); cursor:pointer; display:flex; align-items:center; gap:6px; transition:all 0.15s;" onmouseover="this.style.background='var(--gray-1)';" onmouseout="this.style.background='none';">⏳ ก่อน</div>
+      </div>
+    </div>
   </div>
 
   <!-- Card Grid -->
@@ -558,6 +575,73 @@ body{font-family:'IBM Plex Sans Thai',sans-serif;background:#F0F4F8;color:var(--
   </div>
 </div>
 
+<!-- ADMIN STATUS MODAL -->
+<div id="admin-modal" style="position:fixed; inset:0; background:rgba(15,23,42,0.6); backdrop-filter:blur(4px); z-index:9999; display:none; align-items:center; justify-content:center; padding:16px;">
+  <div style="background:#fff; border-radius:14px; box-shadow:var(--shadow-lg); width:100%; max-width:400px; padding:20px; animation:fdDown 0.2s ease;">
+    <h3 style="font-size:16px; font-weight:700; margin-bottom:12px; display:flex; align-items:center; gap:8px;">🛠️ จัดการข้อมูลและตอบกลับ</h3>
+    
+    <label style="font-size:12px; font-weight:600; color:var(--gray-5); display:block; margin-bottom:6px;">🏷️ เลือกสถานะใหม่:</label>
+    <select id="adm-status-select" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--gray-3); font-size:13px; font-family:inherit; margin-bottom:14px; background:#fff; cursor:pointer;">
+      <option value="รอรับเรื่อง">🕐 รอรับเรื่อง</option>
+      <option value="กำลังดำเนินการ">⚙️ กำลังดำเนินการ</option>
+      <option value="ส่งต่อ">➡️ ส่งต่อ</option>
+      <option value="เสร็จแล้ว">✅ เสร็จแล้ว</option>
+    </select>
+    
+    <label style="font-size:12px; font-weight:600; color:var(--gray-5); display:block; margin-bottom:6px;">💬 ข้อความตอบกลับจากแอดมิน:</label>
+    <textarea id="adm-reply-text" placeholder="ระบุการชี้แจงการแก้ไขปัญหาที่นี่..." style="width:100%; height:80px; padding:10px; border-radius:8px; border:1px solid var(--gray-3); font-size:13px; font-family:inherit; margin-bottom:18px; resize:none; outline:none;"></textarea>
+    
+    <div style="display:flex; justify-content:flex-end; gap:8px;">
+      <button onclick="closeAdminModal()" style="padding:8px 16px; border-radius:8px; border:none; background:var(--gray-2); color:var(--gray-5); font-size:13px; font-weight:600; cursor:pointer; font-family:inherit;">ยกเลิก</button>
+      <button id="adm-save-btn" onclick="saveAdminManage()" style="padding:8px 18px; border-radius:8px; border:none; background:var(--navy); color:#fff; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit;">บันทึกข้อมูล</button>
+    </div>
+  </div>
+</div>
+
+<!-- REPORT DETAIL MODAL -->
+<div id="detail-modal" style="position:fixed; inset:0; background:rgba(15,23,42,0.6); backdrop-filter:blur(4px); z-index:9999; display:none; align-items:center; justify-content:center; padding:16px;" onclick="closeDetailModal(event)">
+  <div style="background:#fff; border-radius:16px; box-shadow:var(--shadow-lg); width:100%; max-width:550px; overflow:hidden; animation:fdDown 0.22s ease; position:relative;" onclick="event.stopPropagation()">
+    <!-- ปุ่มกากบาทปิดที่มุมขวาบน -->
+    <button onclick="closeDetailModal()" style="position:absolute; top:12px; right:12px; width:32px; height:32px; border-radius:50%; border:none; background:rgba(15,23,42,0.08); color:var(--gray-6); font-size:16px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; z-index:10; transition:all 0.18s;" onmouseover="this.style.background='rgba(15,23,42,0.15)'" onmouseout="this.style.background='rgba(15,23,42,0.08)'">✕</button>
+    
+    <!-- รูปขนาดใหญ่ -->
+    <div id="dtm-img-container" style="width:100%; height:280px; background:#F1F5F9; display:flex; align-items:center; justify-content:center; position:relative; border-bottom:1px solid var(--gray-2);">
+      <span id="dtm-status-badge" style="position:absolute; top:14px; left:14px; font-size:11px; font-weight:800; padding:4px 12px; border-radius:20px; box-shadow:0 2px 8px rgba(0,0,0,0.18); z-index:5;">รอรับเรื่อง</span>
+    </div>
+    
+    <!-- ส่วนข้อมูลรายละเอียด -->
+    <div style="padding:22px;">
+      <!-- แถวบน: วันที่ & หมวดหมู่ -->
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+        <span id="dtm-date" style="font-size:12px; color:var(--gray-4); font-weight:500;">📅 วันที่: -</span>
+        <span id="dtm-category" style="font-size:11px; font-weight:600; padding:3px 10px; border-radius:20px; background:#F3F4F6; color:#4B5563; border:1px solid #E5E7EB;">หมวดหมู่</span>
+      </div>
+      
+      <!-- หัวข้อปัญหา (ตัวใหญ่ชัดเจน) -->
+      <h3 id="dtm-title" style="font-size:18px; font-weight:700; color:var(--navy); margin-bottom:8px; line-height:1.4;">หัวข้อปัญหา</h3>
+      
+      <!-- รายละเอียดปัญหา -->
+      <div style="font-size:13px; color:var(--gray-5); line-height:1.6; margin-bottom:20px; background:var(--gray-1); padding:12px; border-radius:8px; border:1px solid var(--gray-2); max-height:120px; overflow-y:auto;">
+        <strong>รายละเอียด:</strong> <span id="dtm-detail">-</span>
+      </div>
+      
+      <!-- ส่วนของการตอบกลับ/แก้ไขโดยแอดมิน -->
+      <div id="dtm-reply-box" style="border-top:1.5px dashed var(--gray-3); padding-top:16px;">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+          <div style="width:24px; height:24px; border-radius:50%; background:var(--navy); color:#fff; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center;">ช</div>
+          <div>
+            <div style="font-size:11px; font-weight:700; color:var(--navy);">การชี้แจงแก้ไขจากแอดมิน</div>
+            <div style="font-size:9px; color:var(--gray-4);">อัปเดตล่าสุดโดยทีมงาน</div>
+          </div>
+        </div>
+        <div id="dtm-reply-msg" style="background:#ECFDF5; border:1px solid #A7F3D0; color:#065F46; border-radius:8px; padding:12px; font-size:12.5px; line-height:1.6; font-weight:500;">
+          ยังไม่มีการระบุข้อมูล
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- MY PANEL -->
 <div id="mp-overlay" onclick="closePanel(event)">
   <div class="mp" onclick="event.stopPropagation()">
@@ -565,24 +649,27 @@ body{font-family:'IBM Plex Sans Thai',sans-serif;background:#F0F4F8;color:var(--
       <h3>บัญชีของฉัน</h3>
       <button class="close-x" onclick="closePanel()">✕</button>
     </div>
-    <div class="mp-tabs">
-      <div class="mp-tab ac" id="mpt-reports" onclick="swTab('reports')">การแจ้ง (<span id="cnt-reports">0</span>)</div>
-      <div class="mp-tab" id="mpt-replies" onclick="swTab('replies')">การตอบกลับ (<span id="cnt-replies">0</span>)</div>
+    <div class="mp-tabs" style="display: none !important;">
+      <div class="mp-tab ac" id="mpt-reports" onclick="swTab('reports')"><span id="lbl-reports">การแจ้ง</span> (<span id="cnt-reports">0</span>)</div>
+      <div class="mp-tab" id="mpt-replies" onclick="swTab('replies')"><span id="lbl-replies">การตอบกลับ</span> (<span id="cnt-replies">0</span>)</div>
     </div>
     <div class="mp-con ac" id="mpc-reports">
       <div style="text-align:center;padding:30px;color:var(--gray-4);font-size:13px">กำลังโหลด...</div>
     </div>
-    <div class="mp-con" id="mpc-replies">
+    <div class="mp-con" id="mpc-replies" style="display: none !important;">
       <div style="text-align:center;padding:30px;color:var(--gray-4);font-size:13px">กำลังโหลด...</div>
     </div>
   </div>
 </div>
 
-<!-- Firebase SDK -->
+<!-- Local Storage Mock Firebase (คุณสามารถเอาคอมเมนต์ของจริงออกได้หากต้องการกลับไปใช้ Firebase จริง) -->
+<script src="mock-firebase.js"></script>
+<!--
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+-->
 <script>
 // ========== FIREBASE CONFIG ==========
 const firebaseConfig = {
@@ -605,6 +692,8 @@ const FEEDBACK_URL = '';
 // ========== STATE ==========
 let currentUser = null;
 let regEmail = '';
+let currentPanelReports = [];
+let currentManagingId = null;
 // ci declared in carousel section below
 
 // ========== TOAST ==========
@@ -758,12 +847,31 @@ function onLoginSuccess(user) {
   currentUser = user;
   const email = user.email || '';
   const name  = user.displayName || email.split('@')[0];
+  const isAdminUser = email === 'cmu-admin@cmu.ac.th';
 
-  document.getElementById('dd-name').textContent  = name;
+  document.getElementById('dd-name').textContent  = name + (isAdminUser ? ' (Admin)' : '');
   document.getElementById('dd-email').textContent = email;
   document.getElementById('av-el').textContent    = name.charAt(0).toUpperCase();
   document.getElementById('av-wrap').style.display = 'flex';
   const lb = document.getElementById('nav-login-btn'); if(lb) lb.style.display='none';
+
+  // Customize tab names for Admin
+  const reportsTab = document.querySelector(".dd-item[onclick=\"openPanel('reports')\"]");
+  if (reportsTab) {
+    reportsTab.innerHTML = isAdminUser 
+      ? `<span>📊</span> จัดการรายงานทั้งหมด <span class="dd-badge" id="badge-report">0</span>`
+      : `<span>📋</span> รายละเอียดการแจ้ง <span class="dd-badge" id="badge-report">0</span>`;
+  }
+  
+  const mpTitle = document.querySelector(".mp-head h3");
+  if (mpTitle) {
+    mpTitle.textContent = isAdminUser ? '📊 แผงควบคุมระบบ (Admin Dashboard)' : '📋 รายละเอียดการทำงาน';
+  }
+  
+  const lblReports = document.getElementById('lbl-reports');
+  if (lblReports) {
+    lblReports.textContent = isAdminUser ? 'รายการแจ้งทั้งหมด' : 'ปัญหาที่ฉันแจ้ง';
+  }
 
   closeAuth();
   toast('✅ ยินดีต้อนรับ ' + name, 'ok');
@@ -789,11 +897,119 @@ async function doLogout() {
 
 
 // ========== LOAD USER REPORTS (จาก Firebase) ==========
+let activePanelCategory = 'all';
+
+const CATEGORIES = [
+  "💡 ไฟฟ้า / หลอดไฟ",
+  "🏢 อาคาร / แอร์ห้องเรียน",
+  "💧 ห้องน้ำ / ท่อประปา",
+  "🛣️ ถนน / ที่จอดรถ",
+  "🗑️ ขยะ / ความสะอาด",
+  "🌐 อินเทอร์เน็ต / Wi-Fi",
+  "🐶 สัตว์จรจัด / สัตว์มีพิษ",
+  "❓ อื่นๆ"
+];
+
+function openPanelWithCategory(cat) {
+  activePanelCategory = cat;
+  document.getElementById('dd-el').classList.remove('open');
+  document.getElementById('mp-overlay').classList.add('open');
+  swTab('reports');
+  renderPanelReportsOnly();
+}
+
+function updateDropdownCategories(reports) {
+  const catBox = document.getElementById('dd-cat-box');
+  if (!catBox) return;
+
+  const isAdminUser = currentUser && currentUser.email === 'cmu-admin@cmu.ac.th';
+  if (!isAdminUser) {
+    catBox.style.display = 'none';
+    return;
+  }
+
+  catBox.style.display = 'flex';
+
+  const catCounts = {};
+  reports.forEach(r => {
+    const cat = r.category || '❓ อื่นๆ';
+    catCounts[cat] = (catCounts[cat] || 0) + 1;
+  });
+
+  let html = ``;
+  CATEGORIES.forEach(cat => {
+    const count = catCounts[cat] || 0;
+    const badgeColor = count > 0 ? 'var(--navy)' : 'var(--gray-4)';
+    const textColor = count > 0 ? 'var(--text)' : 'var(--gray-5)';
+    const fontWeight = count > 0 ? '600' : '500';
+    const opacity = count > 0 ? '1' : '0.65';
+    
+    html += `
+      <div class="dd-item" onclick="openPanelWithCategory('${cat}')" style="font-size:12px; padding:6px 12px; font-weight:${fontWeight}; color:${textColor}; display:flex; align-items:center; justify-content:space-between; border-radius:6px; margin: 1px 0; transition:all 0.15s; opacity:${opacity}">
+        <span style="display:flex; align-items:center; gap:6px;">📁 ${cat}</span>
+        <span class="dd-badge" style="background:${badgeColor}; color:#fff; font-size:10px; padding:1px 6px; border-radius:10px; font-weight:700;">${count}</span>
+      </div>`;
+  });
+
+  if (!html) {
+    html = `<div style="font-size:11px; color:var(--gray-4); text-align:center; padding:6px 0;">ไม่มีปัญหาที่ค้างอยู่</div>`;
+  }
+
+  catBox.innerHTML = html;
+}
+
+function renderPanelReportsOnly() {
+  const isAdminUser = currentUser && currentUser.email === 'cmu-admin@cmu.ac.th';
+  const rGrid = document.getElementById('mpc-reports');
+  if (!rGrid) return;
+  
+  let displayReports;
+  if (activePanelCategory === 'all') {
+    displayReports = isAdminUser
+      ? currentPanelReports.filter(r => r.status !== 'เสร็จแล้ว')
+      : currentPanelReports;
+  } else {
+    displayReports = currentPanelReports.filter(r => (r.category || '❓ อื่นๆ') === activePanelCategory);
+  }
+
+  const mpTitle = document.querySelector(".mp-head h3");
+  if (mpTitle) {
+    if (activePanelCategory === 'all') {
+      mpTitle.textContent = isAdminUser ? '📊 แผงควบคุมระบบ (Admin Dashboard)' : '📋 รายละเอียดการทำงาน';
+    } else {
+      mpTitle.textContent = `📁 หมวดหมู่: ${activePanelCategory}`;
+    }
+  }
+
+  rGrid.innerHTML = displayReports.length === 0
+    ? `<div style="text-align:center;padding:30px;color:var(--gray-4);font-size:13px">ไม่พบการแจ้งปัญหาในหมวดหมู่นี้</div>`
+    : displayReports.map(r => {
+        const sc = r.status==='เสร็จแล้ว'?'s-done':r.status==='กำลังดำเนินการ'?'s-active':r.status==='ส่งต่อ'?'s-fwd':'s-pending';
+        const adminBtn = isAdminUser
+          ? `<button onclick="event.stopPropagation(); adminManageReport('${r.id}')" style="margin-top:8px;padding:5px 10px;border-radius:6px;border:none;background:var(--navy);color:#fff;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:4px;transition:all 0.18s;box-shadow:var(--shadow)">🛠️ เปลี่ยนสถานะ / ตอบกลับ</button>`
+          : '';
+          
+        return `<div class="ri" onclick="showReportDetail('${r.id}')" style="cursor:pointer">
+          <div class="ri-top">
+            <div class="ri-title">${r.title||'ไม่มีชื่อ'}</div>
+            <span class="ri-s ${sc}">${r.status||'รอรับเรื่อง'}</span>
+          </div>
+          <div class="ri-desc">${r.detail||'-'}</div>
+          <div class="ri-date">📅 ${new Date(r.created_at||Date.now()).toLocaleDateString('th-TH')} • ${r.category||''}</div>
+          ${adminBtn}
+        </div>`;
+      }).join('');
+}
+
 async function loadUserReports(userId) {
-  const snapshot = await db.collection('reports')
-    .where('user_id', '==', userId)
-    .orderBy('created_at', 'desc')
-    .get()
+  const isAdminUser = currentUser && currentUser.email === 'cmu-admin@cmu.ac.th';
+  
+  let query = db.collection('reports');
+  if (!isAdminUser) {
+    query = query.where('user_id', '==', userId);
+  }
+  
+  const snapshot = await query.orderBy('created_at', 'desc').get()
     .catch(e => { console.error('loadUserReports error:', e); return null; });
 
   if (!snapshot) return;
@@ -807,28 +1023,23 @@ async function loadUserReports(userId) {
     reports.push(d);
   });
 
+  const displayReports = isAdminUser 
+    ? reports.filter(r => r.status !== 'เสร็จแล้ว') 
+    : reports;
+
+  currentPanelReports = reports;
+
   // นับ badge
   const replies = reports.filter(r => r.reply);
-  document.getElementById('badge-report').textContent = reports.length;
+  document.getElementById('badge-report').textContent = displayReports.length;
   document.getElementById('badge-reply').textContent  = replies.length;
-  document.getElementById('cnt-reports').textContent  = reports.length;
+  document.getElementById('cnt-reports').textContent  = displayReports.length;
   document.getElementById('cnt-replies').textContent  = replies.length;
 
-  // render reports
-  const rGrid = document.getElementById('mpc-reports');
-  rGrid.innerHTML = reports.length === 0
-    ? '<div style="text-align:center;padding:30px;color:var(--gray-4);font-size:13px">ยังไม่มีการแจ้งปัญหา</div>'
-    : reports.map(r => {
-        const sc = r.status==='เสร็จแล้ว'?'s-done':r.status==='กำลังดำเนินการ'?'s-active':'s-pending';
-        return `<div class="ri">
-          <div class="ri-top">
-            <div class="ri-title">${r.title||'ไม่มีชื่อ'}</div>
-            <span class="ri-s ${sc}">${r.status||'รอดำเนินการ'}</span>
-          </div>
-          <div class="ri-desc">${r.detail||'-'}</div>
-          <div class="ri-date">📅 ${new Date(r.created_at||Date.now()).toLocaleDateString('th-TH')} • ${r.category||''}</div>
-        </div>`;
-      }).join('');
+  updateDropdownCategories(reports);
+  renderPanelReportsOnly();
+
+  window.openPanelWithCategory = openPanelWithCategory;
 
   // render replies
   const repGrid = document.getElementById('mpc-replies');
@@ -845,6 +1056,135 @@ async function loadUserReports(userId) {
           <div class="rep-ref">📋 อ้างอิง: ${r.title}</div>
         </div>`).join('');
 }
+
+// ========== ADMIN CONTROL FROM DROPDOWN MENU PANEL ==========
+async function adminManageReport(id) {
+  currentManagingId = id;
+  
+  // Find report to pre-populate modal inputs
+  const reportItem = currentPanelReports.find(r => r.id === id);
+  if (reportItem) {
+    document.getElementById('adm-status-select').value = reportItem.status || 'รอรับเรื่อง';
+    document.getElementById('adm-reply-text').value = reportItem.reply || '';
+  } else {
+    document.getElementById('adm-status-select').value = 'รอรับเรื่อง';
+    document.getElementById('adm-reply-text').value = '';
+  }
+  
+  // Show modal
+  document.getElementById('admin-modal').style.display = 'flex';
+}
+
+function closeAdminModal() {
+  document.getElementById('admin-modal').style.display = 'none';
+  currentManagingId = null;
+}
+
+async function saveAdminManage() {
+  if (!currentManagingId) return;
+  const newStatus = document.getElementById('adm-status-select').value;
+  const adminReply = document.getElementById('adm-reply-text').value;
+  
+  try {
+    toast('⏳ กำลังอัปเดตข้อมูล...');
+    await db.collection('reports').doc(currentManagingId).update({
+      status: newStatus,
+      reply: adminReply,
+      updated_at: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    toast('✅ อัปเดตสถานะและตอบกลับเรียบร้อย!', 'ok');
+    closeAdminModal();
+  } catch(e) {
+    console.error('saveAdminManage error:', e);
+    toast('❌ อัปเดตไม่สำเร็จ: ' + e.message, 'er');
+  }
+}
+
+window.adminManageReport = adminManageReport;
+window.closeAdminModal = closeAdminModal;
+window.saveAdminManage = saveAdminManage;
+
+// ========== SHOW REPORT DETAIL MODAL ==========
+function showReportDetail(id) {
+  let r = allReports.find(x => x.id === id);
+  if (!r && typeof currentPanelReports !== 'undefined') {
+    r = currentPanelReports.find(x => x.id === id);
+  }
+  if (!r) return;
+  
+  // Set image
+  const imgContainer = document.getElementById('dtm-img-container');
+  if (r.image_url) {
+    imgContainer.innerHTML = `<img src="${r.image_url}" style="width:100%; height:100%; object-fit:cover;">
+      <span id="dtm-status-badge" style="position:absolute; top:14px; left:14px; font-size:11px; font-weight:800; padding:4px 12px; border-radius:20px; box-shadow:0 2px 8px rgba(0,0,0,0.18); z-index:5;"></span>`;
+  } else {
+    imgContainer.innerHTML = `<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; width:calc(100% - 24px); height:calc(100% - 24px); border:2px dashed var(--gray-3); border-radius:10px; background:#fff;">
+      <span style="font-size:32px;">🖼️</span>
+      <span style="font-size:11px; color:var(--gray-4); font-weight:500;">ไม่มีรูปภาพประกอบ</span>
+    </div>
+    <span id="dtm-status-badge" style="position:absolute; top:14px; left:14px; font-size:11px; font-weight:800; padding:4px 12px; border-radius:20px; box-shadow:0 2px 8px rgba(0,0,0,0.18); z-index:5;"></span>`;
+  }
+  
+  // Set badge
+  const badge = document.getElementById('dtm-status-badge');
+  const status = r.status || 'รอรับเรื่อง';
+  badge.textContent = status;
+  
+  // Reset classes and set styling matching original badge styles
+  badge.className = '';
+  if (status === 'เสร็จแล้ว') {
+    badge.style.background = '#DCFCE7';
+    badge.style.color = '#166534';
+  } else if (status === 'กำลังดำเนินการ') {
+    badge.style.background = '#FEF9C3';
+    badge.style.color = '#854D0E';
+  } else if (status === 'ส่งต่อ') {
+    badge.style.background = '#DBEAFE';
+    badge.style.color = '#1E40AF';
+  } else {
+    badge.style.background = '#FEE2E2';
+    badge.style.color = '#991B1B';
+  }
+  
+  // Set text fields
+  const dateStr = r.created_at ? new Date(r.created_at).toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'numeric'}) : '—';
+  document.getElementById('dtm-date').textContent = '📅 วันที่: ' + dateStr;
+  document.getElementById('dtm-category').textContent = r.category || '❓ อื่นๆ';
+  document.getElementById('dtm-title').textContent = r.title || 'ไม่ระบุ';
+  document.getElementById('dtm-detail').textContent = r.detail || '-';
+  
+  // Set admin reply
+  const replyMsg = document.getElementById('dtm-reply-msg');
+  if (r.reply) {
+    replyMsg.textContent = r.reply;
+    if (status === 'เสร็จแล้ว') {
+      replyMsg.style.background = '#ECFDF5';
+      replyMsg.style.border = '1px solid #A7F3D0';
+      replyMsg.style.color = '#065F46';
+    } else {
+      replyMsg.style.background = '#FFFBEB';
+      replyMsg.style.border = '1px solid #FDE68A';
+      replyMsg.style.color = '#92400E';
+    }
+  } else {
+    replyMsg.textContent = '🕐 อยู่ระหว่างดำเนินการและเตรียมข้อมูลโดยแอดมิน';
+    replyMsg.style.background = '#F9FAFB';
+    replyMsg.style.border = '1px solid #E5E7EB';
+    replyMsg.style.color = '#6B7280';
+  }
+  
+  // Show Modal
+  document.getElementById('detail-modal').style.display = 'flex';
+}
+
+function closeDetailModal(e) {
+  if (!e || e.target === document.getElementById('detail-modal')) {
+    document.getElementById('detail-modal').style.display = 'none';
+  }
+}
+
+window.showReportDetail = showReportDetail;
+window.closeDetailModal = closeDetailModal;
 
 // ========== GO REPORT ==========
 function goReport() {
@@ -897,7 +1237,9 @@ document.addEventListener('click', e => {
 function openPanel(tab) {
   document.getElementById('dd-el').classList.remove('open');
   document.getElementById('mp-overlay').classList.add('open');
+  activePanelCategory = 'all';
   swTab(tab);
+  renderPanelReportsOnly();
 }
 function closePanel(e) {
   if (!e || e.target === document.getElementById('mp-overlay'))
@@ -912,57 +1254,6 @@ function swTab(tab) {
 
 // ========== NAV ==========
 function setNav(el) { /* nav links removed */ }
-function renderPagination(totalPages) {
-  const nums = document.getElementById('pg-numbers');
-  const prev = document.getElementById('pg-prev');
-  const next = document.getElementById('pg-next');
-  if (!nums) return;
-
-  prev.disabled = currentPage <= 1;
-  next.disabled = currentPage >= totalPages;
-
-  let html2 = '';
-  for (let i = 1; i <= totalPages; i++) {
-    if (totalPages <= 7 || i === 1 || i === totalPages || Math.abs(i - currentPage) <= 1) {
-      html2 += `<button class="pg-num${i===currentPage?' ac':''}" onclick="gotoPage(${i})">${i}</button>`;
-    } else if (Math.abs(i - currentPage) === 2) {
-      html2 += `<span style="display:flex;align-items:center;color:var(--gray-4);font-size:13px;padding:0 2px">…</span>`;
-    }
-  }
-  nums.innerHTML = html2;
-}
-
-function gotoPage(p) {
-  currentPage = p;
-  renderCards();
-  window.scrollTo({ top: document.getElementById('card-grid')?.offsetTop - 80 || 0, behavior: 'smooth' });
-}
-
-function changePage(dir) {
-  const total = Math.ceil(filteredCache.length / ITEMS_PER_PAGE);
-  gotoPage(Math.max(1, Math.min(total, currentPage + dir)));
-}
-
-function filterByStatus(status) {
-  // อัปเดต tab ให้ตรง
-  document.querySelectorAll('.tab').forEach(t => {
-    const match = status === 'all'
-      ? t.dataset.status === 'all'
-      : t.dataset.status === status;
-    t.classList.toggle('ac', match);
-  });
-  currentStatus = status;
-  currentPage = 1;
-  renderCards();
-  // scroll ลงไปที่การ์ด
-  const g = document.getElementById('card-grid');
-  if(g) g.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-function setTab(el) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('ac'));
-  el.classList.add('ac');
-}
 
 // ========== CAROUSEL ==========
 let ci = 0;
@@ -993,7 +1284,7 @@ async function loadStats() {
     });
 
     const total = data.length;
-    const wait  = data.filter(r => !r.status || r.status==='รอดำเนินการ').length;
+    const wait  = data.filter(r => !r.status || r.status==='รอรับเรื่อง' || r.status==='รอดำเนินการ').length;
     const prog  = data.filter(r => r.status==='กำลังดำเนินการ').length;
     const fwd   = data.filter(r => r.status==='ส่งต่อ').length;
     const done  = data.filter(r => r.status==='เสร็จแล้ว').length;
@@ -1031,9 +1322,16 @@ function renderCards() {
   const grid = document.getElementById('card-grid');
   let filtered = currentStatus === 'all'
     ? allReports
-    : allReports.filter(r => (r.status||'รอดำเนินการ') === currentStatus);
+    : allReports.filter(r => {
+        const s = r.status || 'รอรับเรื่อง';
+        if (currentStatus === 'รอรับเรื่อง' || currentStatus === 'รอดำเนินการ') {
+          return s === 'รอรับเรื่อง' || s === 'รอดำเนินการ';
+        }
+        return s === currentStatus;
+      });
 
   filtered = [...filtered].sort((a,b) => {
+    if (currentSort === 'all') return 0;
     const da = new Date(a.created_at||0), db = new Date(b.created_at||0);
     return currentSort === 'newest' ? db-da : da-db;
   });
@@ -1052,23 +1350,28 @@ function renderCards() {
   }
 
   grid.innerHTML = pageItems.map(r => {
-    const status = r.status || 'รอดำเนินการ';
+    const status = r.status || 'รอรับเรื่อง';
     const bc = status==='เสร็จแล้ว'?'badge-done':status==='กำลังดำเนินการ'?'badge-prog':status==='ส่งต่อ'?'badge-fwd':'badge-wait';
     const imgHtml = r.image_url
       ? `<img src="${r.image_url}" alt="รูปปัญหา">`
       : `<div class="no-img"><span class="ni-icon">🖼️</span><span class="ni-txt">ใส่รูปภาพที่แจ้งมา</span></div>`;
-    const dateStr = r.created_at ? new Date(r.created_at).toLocaleDateString('th-TH',{day:'numeric',month:'short'}) : '—';
+    const dateStr = r.created_at ? new Date(r.created_at).toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'numeric'}) : '—';
+    const replyVal = r.reply || 'รอรับเรื่อง';
+    const replyColor = replyVal === 'รอรับเรื่อง' ? '#EF4444' : '#4B5563';
     return `
-      <div class="rep-card">
-        <div class="rep-card-img">${imgHtml}</div>
+      <div class="rep-card" onclick="showReportDetail('${r.id}')">
+        <div class="rep-card-img">
+          ${imgHtml}
+          <span class="rci-badge ${bc} card-status-badge">${status}</span>
+        </div>
         <div class="rep-card-body">
           <div class="rci-row">
-            <span class="rci-date">วันที่: ${dateStr}</span>
-            <span class="rci-badge ${bc}">${status}</span>
+            <span class="rci-date" style="color:#4B5563; font-weight:500;"><strong style="font-weight:700; color:#1E293B;">วันที่:</strong> ${dateStr}</span>
+            <span class="rci-category-badge">${r.category || '❓ อื่นๆ'}</span>
           </div>
-          <div class="rci-problem">ปัญหา: ${r.category||r.title||'ไม่ระบุ'}</div>
-          <div class="rci-detail">รายละเอียด: ${r.detail||r.title||'-'}</div>
-          <div class="rci-fix">การแก้ไข: ${r.reply||'รอดำเนินการ'}</div>
+          <div class="rci-problem" style="color:#4B5563; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><strong style="font-weight:700; color:#1E293B;">ปัญหา:</strong> ${r.title || 'ไม่ระบุ'}</div>
+          <div class="rci-detail" style="color:#4B5563; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><strong style="font-weight:700; color:#1E293B;">รายละเอียด:</strong> ${r.detail || '-'}</div>
+          <div class="rci-fix" style="color:#4B5563; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><strong style="font-weight:700; color:#1E293B;">การแก้ไข:</strong> <span style="color:${replyColor}; font-weight:500;">${replyVal}</span></div>
         </div>
       </div>`;
   }).join('');
@@ -1135,6 +1438,28 @@ function setSortAndRender(val) {
   renderCards();
 }
 
+function toggleFilterDD(e) {
+  e.stopPropagation();
+  const dd = document.getElementById('filter-dd');
+  const isOpen = dd.style.display === 'flex';
+  dd.style.display = isOpen ? 'none' : 'flex';
+}
+
+function selectSort(sortVal, labelText) {
+  setSortAndRender(sortVal);
+  document.getElementById('filter-btn').innerHTML = `⚙️ ตัวกรอง: ${labelText}`;
+  document.getElementById('filter-dd').style.display = 'none';
+}
+
+// Close filter dropdown when clicking outside
+document.addEventListener('click', () => {
+  const dd = document.getElementById('filter-dd');
+  if (dd) dd.style.display = 'none';
+});
+
+window.toggleFilterDD = toggleFilterDD;
+window.selectSort = selectSort;
+
 // ========== SESSION CHECK (Firebase) ==========
 
 fbAuth.onAuthStateChanged(user => {
@@ -1148,8 +1473,13 @@ fbAuth.onAuthStateChanged(user => {
 });
 
 // ========== INIT ==========
-loadStats();
-setInterval(loadStats, 60000); // refresh ทุก 1 นาที
+db.collection('reports').onSnapshot(() => {
+  loadStats();
+  if (currentUser) {
+    loadUserReports(currentUser.uid);
+  }
+});
+setInterval(loadStats, 60000); // fallback refresh ทุก 1 นาที
 </script>
 </body>
 </html>

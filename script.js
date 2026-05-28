@@ -43,6 +43,18 @@ let tempMarker = null;
 
 // 👑 ADMIN
 let isAdmin = false;
+try {
+  const curUser = localStorage.getItem('cmu_current_user') ? JSON.parse(localStorage.getItem('cmu_current_user')) : null;
+  if (curUser && curUser.email === 'cmu-admin@cmu.ac.th') {
+    isAdmin = true;
+    setTimeout(() => {
+      const btn = document.getElementById("toggleAdminBtn");
+      if (btn) btn.style.display = "block";
+    }, 100);
+  }
+} catch (e) {
+  console.error("Admin session restore error:", e);
+}
 
 // 🧾 POPUP FORM (Left Side)
 const reportPopup = document.getElementById('reportPopup');
@@ -131,7 +143,7 @@ async function loadReports() {
       marker.bindPopup(`
         <b>${r.title}</b><br/>
         หมวดหมู่: <b>${r.category || '-'}</b><br/>
-        สถานะ: <b>${r.status || 'รอดำเนินการ'}</b><br/>
+        สถานะ: <b>${r.status || 'รอรับเรื่อง'}</b><br/>
         ${r.detail}
         ${imgHtml}
         ${replyHtml}
@@ -263,6 +275,10 @@ document.getElementById('submitBtn').addEventListener('click', async () => {
     }
 
     // บันทึกข้อมูลไปยัง Firestore
+    const activeUser = auth.currentUser;
+    const userId = activeUser ? activeUser.uid : 'anonymous';
+    const userEmail = activeUser ? activeUser.email : '';
+
     await db.collection('reports').add({
       title,
       detail,
@@ -270,7 +286,9 @@ document.getElementById('submitBtn').addEventListener('click', async () => {
       lng: selectedLng,
       image_url: uploadedImageUrl,
       category: category, 
-      status: 'รอดำเนินการ',
+      status: 'รอรับเรื่อง',
+      user_id: userId,
+      user_email: userEmail,
       created_at: firebase.firestore.FieldValue.serverTimestamp(),
       updated_at: firebase.firestore.FieldValue.serverTimestamp()
     });
@@ -286,7 +304,10 @@ document.getElementById('submitBtn').addEventListener('click', async () => {
     if (tempMarker) { map.removeLayer(tempMarker); tempMarker = null; }
 
     hideReportPopup();
-    showToast("📌 แจ้งปัญหาสำเร็จ");
+    showToast("📌 แจ้งปัญหาสำเร็จ กำลังกลับสู่หน้าหลัก...");
+    setTimeout(() => {
+      window.location.href = 'cmu-report-final9.html';
+    }, 1200);
   } catch (error) {
     console.error("Submit error:", error);
     document.getElementById('submitBtn').innerText = "แจ้งปัญหา";
