@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CMU Report — แผนที่แจ้งปัญหา</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
-    <link rel="stylesheet" href="style.css?v=1.4"/>
+    <link rel="stylesheet" href="style.css?v=1.5"/>
     <style>
         /* TOAST NOTIFICATION */
         #toast {
@@ -47,31 +47,7 @@
   <!-- ปุ่มกลับหน้าหลัก -->
   <button id="back-btn" onclick="window.location.href='cmu-report-final9.html'">← หน้าหลัก</button>
 
-  <div id="adminControls" class="admin-controls-container" style="display: none;">
-      <div id="adminLoginBox" class="admin-login-controls">
-          <div class="admin-login-content">
-              <span class="close-admin" onclick="toggleAdminControls()">×</span>
-              <h4>Admin Login</h4>
-              <input id="adminEmail" placeholder="email">
-              <input id="adminPassword" type="password" placeholder="password">
-              <button onclick="login()">Login</button>
-              <p id="loginStatus">ยังไม่ได้ login</p>
-          </div>
-      </div>
 
-      <div id="adminDashboardBox" class="admin-dashboard-controls" style="display: none;">
-          <div class="admin-dashboard-content">
-              <h4>Admin Dashboard</h4>
-              <p>ยินดีต้อนรับ แอดมิน</p>
-              <button onclick="loadTable()">🔄 Refresh ตาราง</button>
-              <button onclick="logout()">Logout</button>
-          </div>
-      </div>
-  </div>
-
-  <button id="toggleAdminBtn" onclick="toggleAdminControls()" style="position: absolute; top: 10px; right: 10px; z-index: 2000; padding: 5px 10px; background: #333; color: white; border: none; border-radius: 5px; cursor: pointer; display: none;">
-      🔐 Admin
-  </button>
 
   <div id="map"></div>
 
@@ -106,30 +82,18 @@
     </div>
   </div>
 
-  <div id="adminPanel" style="display: none;">
-      <h4>📊 Admin Dashboard (ตารางรายงาน)</h4>
-      <button onclick="loadTable()">🔄 Refresh</button>
-      <table border="1">
-          <thead>
-              <tr>
-                  <th>Title</th>
-                  <th>Action</th>
-              </tr>
-          </thead>
-          <tbody id="reportTable"></tbody>
-      </table>
-  </div>
+
 
   <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
   <!-- Local Storage Mock Firebase -->
-  <script src="mock-firebase.js?v=1.4"></script>
+  <script src="mock-firebase.js?v=1.5"></script>
   <!--
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
   -->
-  <script src="script.js?v=1.4"></script>
+  <script src="script.js?v=1.5"></script>
 
 </body>
 </html>

@@ -57,10 +57,6 @@ try {
   const curUser = localStorage.getItem('cmu_current_user') ? JSON.parse(localStorage.getItem('cmu_current_user')) : null;
   if (curUser && curUser.email === 'cmu-admin@cmu.ac.th') {
     isAdmin = true;
-    setTimeout(() => {
-      const btn = document.getElementById("toggleAdminBtn");
-      if (btn) btn.style.display = "block";
-    }, 100);
   }
 } catch (e) {
   console.error("Admin session restore error:", e);
