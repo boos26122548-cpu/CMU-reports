@@ -289,7 +289,7 @@ body{font-family:'IBM Plex Sans Thai',sans-serif;background:#F0F4F8;color:var(--
 .sort-sel { padding: 7px 12px; border-radius: var(--r); border: 1px solid var(--gray-3); font-size: 12px; color: var(--gray-5); background: #fff; cursor: pointer; font-family: inherit; box-shadow: var(--shadow); }
 
 /* CARDS */
-.grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; min-height: 200px; }
+#card-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; min-height: 200px; }
 .rep-card {
   background: #fff; border-radius: 12px; border: 1px solid var(--gray-3);
   box-shadow: var(--shadow); overflow: hidden; cursor: pointer; transition: all .2s;
@@ -338,8 +338,8 @@ body{font-family:'IBM Plex Sans Thai',sans-serif;background:#F0F4F8;color:var(--
 @keyframes sk { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
 
 @media(max-width:900px) {
-  .hero-right { display: none; }
-  .grid { grid-template-columns: repeat(2, 1fr); }
+  .hero-right { display: flex !important; }
+  #card-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px; }
 }
 
 
@@ -377,14 +377,14 @@ body{font-family:'IBM Plex Sans Thai',sans-serif;background:#F0F4F8;color:var(--
   .hero-left { min-height: 180px; }
   .hc-slider { min-height: 180px; }
   .hc-img-placeholder { min-height: 180px; font-size: 32px; }
-  .hero-right { max-width: 100%; flex-direction: column; }
-  .stat-row { gap: 8px; }
-  .stat-box { height: 60px; padding: 10px 14px; border-radius: 30px; }
-  .stat-box-label { font-size: 12px; }
-  .stat-box-val { font-size: 16px; }
-  .stat-total-row { height: 50px; padding: 10px 16px; }
-  .stat-total-row .lbl { font-size: 14px; }
-  .stat-total-row .val { font-size: 17px; }
+  .hero-right { max-width: 100%; display: flex !important; flex-direction: column; gap: 8px; }
+  .stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; width: 100%; }
+  .stat-box { height: 52px; padding: 6px 12px; border-radius: 20px; }
+  .stat-box-label { font-size: 11px; }
+  .stat-box-val { font-size: 14px; }
+  .stat-total-row { height: 44px; padding: 6px 16px; border-radius: 20px; gap: 10px; width: 100%; }
+  .stat-total-row .lbl { font-size: 12px; }
+  .stat-total-row .val { font-size: 14px; }
 
   /* Content area */
   .content { padding: 0 12px; margin: 14px auto; }
@@ -393,7 +393,7 @@ body{font-family:'IBM Plex Sans Thai',sans-serif;background:#F0F4F8;color:var(--
   .tab { padding: 6px 12px; font-size: 12px; }
 
   /* Cards — 2 คอลัมน์บนมือถือ */
-  .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  #card-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px; }
   .rep-card-img { height: 120px; }
   .rep-card-body { padding: 10px; }
   .rci-problem { font-size: 11px; }
@@ -534,7 +534,7 @@ body{font-family:'IBM Plex Sans Thai',sans-serif;background:#F0F4F8;color:var(--
   </div>
 
   <!-- Card Grid -->
-  <div id="card-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;min-height:200px"></div>
+  <div id="card-grid"></div>
 
   <!-- Pagination -->
   <div id="pagi-wrap" style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:24px;padding-bottom:40px">
@@ -716,7 +716,7 @@ body{font-family:'IBM Plex Sans Thai',sans-serif;background:#F0F4F8;color:var(--
 </div>
 
 <!-- Local Storage Mock Firebase (คุณสามารถเอาคอมเมนต์ของจริงออกได้หากต้องการกลับไปใช้ Firebase จริง) -->
-<script src="mock-firebase.js?v=1.5"></script>
+<script src="mock-firebase.js?v=1.6"></script>
 <!--
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>

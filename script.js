@@ -366,14 +366,22 @@ function getUserLocation() {
     },
     (error) => {
       console.error("GPS Error:", error);
-      alert("ไม่สามารถเข้าถึง GPS ได้ กรุณาอนุญาตเปิดสิทธิ์เข้าถึงตำแหน่งบนเบราว์เซอร์");
+      let errMsg = "ไม่สามารถเข้าถึงตำแหน่งได้";
+      if (error.code === 1) {
+        errMsg = "กรุณาเปิดสิทธิ์เข้าถึงตำแหน่ง (Location Access) ของเบราว์เซอร์นี้ใน 'การตั้งค่า (Settings)' ของ iPad/iPhone";
+      } else if (error.code === 2) {
+        errMsg = "สัญญาณระบุตำแหน่งไม่พร้อมใช้งาน กรุณาเปิดระบบหาตำแหน่ง (GPS) หรือ Wi-Fi ของเครื่อง";
+      } else if (error.code === 3) {
+        errMsg = "ระบบระบุตำแหน่งหมดเวลา (Timeout) กรุณาลองใหม่อีกครั้ง";
+      }
+      alert("❌ " + errMsg + " (Error Code: " + error.code + ")");
       gpsButton.innerText = "📍 ใช้ตำแหน่งปัจจุบันของฉัน";
       gpsButton.disabled = false;
     },
     {
       enableHighAccuracy: false, 
       timeout: 10000,            
-      maximumAge: 0             
+      maximumAge: 60000 // ใช้แคชพิกัดล่าสุด 1 นาที ช่วยให้ระบุตำแหน่งบน Safari ได้ทันทีแม้อยู่ในตึก         
     }
   );
 }
@@ -463,14 +471,22 @@ function getUserLocationMobile() {
     },
     (error) => {
       console.error("GPS Error:", error);
-      alert("ไม่สามารถเข้าถึง GPS ได้ กรุณาอนุญาตเปิดสิทธิ์เข้าถึงตำแหน่งบนเบราว์เซอร์");
+      let errMsg = "ไม่สามารถเข้าถึงตำแหน่งได้";
+      if (error.code === 1) {
+        errMsg = "กรุณาเปิดสิทธิ์เข้าถึงตำแหน่ง (Location Access) ของเบราว์เซอร์นี้ใน 'การตั้งค่า (Settings)' ของ iPad/iPhone";
+      } else if (error.code === 2) {
+        errMsg = "สัญญาณระบุตำแหน่งไม่พร้อมใช้งาน กรุณาเปิดระบบหาตำแหน่ง (GPS) หรือ Wi-Fi ของเครื่อง";
+      } else if (error.code === 3) {
+        errMsg = "ระบบระบุตำแหน่งหมดเวลา (Timeout) กรุณาลองใหม่อีกครั้ง";
+      }
+      alert("❌ " + errMsg + " (Error Code: " + error.code + ")");
       mobileGpsBtn.innerHTML = originalHtml;
       mobileGpsBtn.disabled = false;
     },
     {
       enableHighAccuracy: false, 
       timeout: 10000,            
-      maximumAge: 0             
+      maximumAge: 60000 // ใช้แคชพิกัดล่าสุด 1 นาที ช่วยให้ระบุตำแหน่งบน Safari ได้ทันทีแม้อยู่ในตึก         
     }
   );
 }
