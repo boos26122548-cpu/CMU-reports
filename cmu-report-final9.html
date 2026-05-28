@@ -931,6 +931,14 @@ function onLoginSuccess(user) {
 
   // โหลด reports ของ user
   loadUserReports(user.uid);
+
+  // นำทางไปยังหน้าแผนที่ทันทีหลังจากเข้าสู่ระบบสำเร็จ (กรณีเพิ่งกดแจ้งปัญหาแล้วติดล็อกอิน)
+  if (typeof pendingRedirectToMap !== 'undefined' && pendingRedirectToMap) {
+    pendingRedirectToMap = false;
+    setTimeout(() => {
+      window.location.href = MAP_PAGE;
+    }, 1200);
+  }
 }
 
 // ========== LOGOUT ==========
@@ -1240,10 +1248,13 @@ window.showReportDetail = showReportDetail;
 window.closeDetailModal = closeDetailModal;
 
 // ========== GO REPORT ==========
+let pendingRedirectToMap = false;
+
 function goReport() {
   if (currentUser) {
     window.location.href = MAP_PAGE;
   } else {
+    pendingRedirectToMap = true;
     // แสดง toast แจ้งเตือน แล้วเปิด modal login
     showLoginWarning();
   }
