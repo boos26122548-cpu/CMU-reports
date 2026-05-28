@@ -55,7 +55,8 @@ let tempMarker = null;
 let isAdmin = false;
 try {
   const curUser = localStorage.getItem('cmu_current_user') ? JSON.parse(localStorage.getItem('cmu_current_user')) : null;
-  if (curUser && curUser.email === 'cmu-admin@cmu.ac.th') {
+  const adminViewMode = localStorage.getItem('cmu_admin_view') || 'admin';
+  if (curUser && curUser.email === 'cmu-admin@cmu.ac.th' && adminViewMode === 'admin') {
     isAdmin = true;
   }
 } catch (e) {

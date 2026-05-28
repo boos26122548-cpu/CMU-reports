@@ -447,6 +447,11 @@ body{font-family:'IBM Plex Sans Thai',sans-serif;background:#F0F4F8;color:var(--
         <!-- DYNAMIC CATEGORY BOX FOR ADMIN -->
         <div id="dd-cat-box" style="display:none; border-top:1.5px solid var(--gray-2); margin: 6px 0; padding-top: 6px; flex-direction:column; gap:2px;"></div>
 
+        <!-- BUTTON TO SWITCH BETWEEN ADMIN AND USER VIEW -->
+        <div class="dd-item" id="dd-switch-role-btn" onclick="toggleRoleView()" style="display:none; border-top:1.5px solid var(--gray-2); margin: 6px 0; padding-top: 6px; color:var(--purple); font-weight:700;">
+          <span>🔄</span> <span id="dd-switch-role-text">สลับเป็นมุมมองผู้ใช้</span>
+        </div>
+
         <div class="dd-div" style="display: none !important;"></div>
         <div class="dd-item dd-out" onclick="doLogout()"><span>🚪</span> ออกจากระบบ</div>
       </div>
@@ -716,7 +721,7 @@ body{font-family:'IBM Plex Sans Thai',sans-serif;background:#F0F4F8;color:var(--
 </div>
 
 <!-- Local Storage Mock Firebase (คุณสามารถเอาคอมเมนต์ของจริงออกได้หากต้องการกลับไปใช้ Firebase จริง) -->
-<script src="mock-firebase.js?v=1.6"></script>
+<script src="mock-firebase.js?v=1.7"></script>
 <!--
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -747,6 +752,7 @@ let currentUser = null;
 let regEmail = '';
 let currentPanelReports = [];
 let currentManagingId = null;
+let isAdminView = localStorage.getItem('cmu_admin_view') !== 'user';
 // ci declared in carousel section below
 
 // ========== TOAST ==========
@@ -901,29 +907,41 @@ function onLoginSuccess(user) {
   const email = user.email || '';
   const name  = user.displayName || email.split('@')[0];
   const isAdminUser = email === 'cmu-admin@cmu.ac.th';
+  const showAsAdmin = isAdminUser && isAdminView;
 
-  document.getElementById('dd-name').textContent  = name + (isAdminUser ? ' (Admin)' : '');
+  document.getElementById('dd-name').textContent  = name + (showAsAdmin ? ' (Admin)' : (isAdminUser ? ' (User View)' : ''));
   document.getElementById('dd-email').textContent = email;
   document.getElementById('av-el').textContent    = name.charAt(0).toUpperCase();
   document.getElementById('av-wrap').style.display = 'flex';
   const lb = document.getElementById('nav-login-btn'); if(lb) lb.style.display='none';
 
+  // Toggle Admin / User view switcher button
+  const switchBtn = document.getElementById('dd-switch-role-btn');
+  if (switchBtn) {
+    if (isAdminUser) {
+      switchBtn.style.display = 'flex';
+      document.getElementById('dd-switch-role-text').textContent = isAdminView ? 'สลับเป็นมุมมองผู้ใช้' : 'สลับเป็นมุมมองแอดมิน';
+    } else {
+      switchBtn.style.display = 'none';
+    }
+  }
+
   // Customize tab names for Admin
   const reportsTab = document.querySelector(".dd-item[onclick=\"openPanel('reports')\"]");
   if (reportsTab) {
-    reportsTab.innerHTML = isAdminUser 
+    reportsTab.innerHTML = showAsAdmin 
       ? `<span>📊</span> จัดการรายงานทั้งหมด <span class="dd-badge" id="badge-report">0</span>`
       : `<span>📋</span> รายละเอียดการแจ้ง <span class="dd-badge" id="badge-report">0</span>`;
   }
   
   const mpTitle = document.querySelector(".mp-head h3");
   if (mpTitle) {
-    mpTitle.textContent = isAdminUser ? '📊 แผงควบคุมระบบ (Admin Dashboard)' : '📋 รายละเอียดการทำงาน';
+    mpTitle.textContent = showAsAdmin ? '📊 แผงควบคุมระบบ (Admin Dashboard)' : '📋 รายละเอียดการทำงาน';
   }
   
   const lblReports = document.getElementById('lbl-reports');
   if (lblReports) {
-    lblReports.textContent = isAdminUser ? 'รายการแจ้งทั้งหมด' : 'ปัญหาที่ฉันแจ้ง';
+    lblReports.textContent = showAsAdmin ? 'รายการแจ้งทั้งหมด' : 'ปัญหาที่ฉันแจ้ง';
   }
 
   closeAuth();
@@ -950,6 +968,25 @@ async function doLogout() {
   // reload กลับมาหน้าเดิมแบบ logged out
   setTimeout(() => window.location.reload(), 1000);
 }
+
+// ========== TOGGLE ROLE VIEW ==========
+function toggleRoleView() {
+  isAdminView = !isAdminView;
+  
+  // บันทึกสถานะลง localStorage เพื่อใช้ร่วมกับหน้าแผนที่
+  localStorage.setItem('cmu_admin_view', isAdminView ? 'admin' : 'user');
+  
+  if (currentUser) {
+    onLoginSuccess(currentUser);
+  }
+  
+  // ปิด dropdown เพื่อความเรียบร้อย
+  document.getElementById('dd-el').classList.remove('open');
+  
+  toast(isAdminView ? '🔄 สลับเป็นมุมมองแอดมินแล้ว' : '🔄 สลับเป็นมุมมองผู้ใช้แล้ว', 'ok');
+}
+
+window.toggleRoleView = toggleRoleView;
 
 
 
@@ -983,8 +1020,8 @@ function updateDropdownCategories(reports) {
   const catBox = document.getElementById('dd-cat-box');
   if (!catBox) return;
 
-  const isAdminUser = currentUser && currentUser.email === 'cmu-admin@cmu.ac.th';
-  if (!isAdminUser) {
+  const showAsAdmin = currentUser && currentUser.email === 'cmu-admin@cmu.ac.th' && isAdminView;
+  if (!showAsAdmin) {
     catBox.style.display = 'none';
     return;
   }
@@ -1020,13 +1057,13 @@ function updateDropdownCategories(reports) {
 }
 
 function renderPanelReportsOnly() {
-  const isAdminUser = currentUser && currentUser.email === 'cmu-admin@cmu.ac.th';
+  const showAsAdmin = currentUser && currentUser.email === 'cmu-admin@cmu.ac.th' && isAdminView;
   const rGrid = document.getElementById('mpc-reports');
   if (!rGrid) return;
   
   let displayReports;
   if (activePanelCategory === 'all') {
-    displayReports = isAdminUser
+    displayReports = showAsAdmin
       ? currentPanelReports.filter(r => r.status !== 'เสร็จแล้ว')
       : currentPanelReports;
   } else {
@@ -1036,7 +1073,7 @@ function renderPanelReportsOnly() {
   const mpTitle = document.querySelector(".mp-head h3");
   if (mpTitle) {
     if (activePanelCategory === 'all') {
-      mpTitle.textContent = isAdminUser ? '📊 แผงควบคุมระบบ (Admin Dashboard)' : '📋 รายละเอียดการทำงาน';
+      mpTitle.textContent = showAsAdmin ? '📊 แผงควบคุมระบบ (Admin Dashboard)' : '📋 รายละเอียดการทำงาน';
     } else {
       mpTitle.textContent = `📁 หมวดหมู่: ${activePanelCategory}`;
     }
@@ -1046,7 +1083,7 @@ function renderPanelReportsOnly() {
     ? `<div style="text-align:center;padding:30px;color:var(--gray-4);font-size:13px">ไม่พบการแจ้งปัญหาในหมวดหมู่นี้</div>`
     : displayReports.map(r => {
         const sc = r.status==='เสร็จแล้ว'?'s-done':r.status==='กำลังดำเนินการ'?'s-active':r.status==='ส่งต่อ'?'s-fwd':'s-pending';
-        const adminBtn = isAdminUser
+        const adminBtn = showAsAdmin
           ? `<button onclick="event.stopPropagation(); adminManageReport('${r.id}')" style="margin-top:8px;padding:5px 10px;border-radius:6px;border:none;background:var(--navy);color:#fff;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:4px;transition:all 0.18s;box-shadow:var(--shadow)">🛠️ เปลี่ยนสถานะ / ตอบกลับ</button>`
           : '';
           
@@ -1063,10 +1100,10 @@ function renderPanelReportsOnly() {
 }
 
 async function loadUserReports(userId) {
-  const isAdminUser = currentUser && currentUser.email === 'cmu-admin@cmu.ac.th';
+  const showAsAdmin = currentUser && currentUser.email === 'cmu-admin@cmu.ac.th' && isAdminView;
   
   let query = db.collection('reports');
-  if (!isAdminUser) {
+  if (!showAsAdmin) {
     query = query.where('user_id', '==', userId);
   }
   
