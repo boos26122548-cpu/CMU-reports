@@ -171,7 +171,7 @@ body { margin: 0; padding: 0; height: 100vh; font-family: sans-serif; overflow: 
 
 /* 📍 FLOATING GPS BUTTON FOR MOBILE/IPAD */
 .mobile-only-gps-btn {
-    display: none; /* ซ่อนโดยปริยายในคอมพิวเตอร์ */
+    display: flex; /* แสดงเป็นค่าเริ่มต้นเพื่อป้องกันปัญหา cache ใน iOS/Safari */
     position: fixed;
     bottom: 20px;
     left: 20px;
@@ -196,13 +196,15 @@ body { margin: 0; padding: 0; height: 100vh; font-family: sans-serif; overflow: 
     transform: scale(1.03);
 }
 
-/* ปรับแต่งสำหรับโทรศัพท์และไอแพด (หน้าจอไม่เกิน 1366px) */
-@media (max-width: 1366px) {
+/* ซ่อนปุ่ม GPS ลอยเฉพาะบนคอมพิวเตอร์หน้าจอขนาดใหญ่กว้างกว่า 1366px */
+@media (min-width: 1367px) {
     .mobile-only-gps-btn {
-        display: flex; /* แสดงปุ่ม GPS ลอย */
+        display: none !important;
     }
-    
-    /* ซ่อนปุ่ม GPS ในกล่องปัญหาสำหรับมือถือ/ไอแพด */
+}
+
+/* ซ่อนปุ่ม GPS ในฟอร์มป๊อปอัพสำหรับมือถือและไอแพด */
+@media (max-width: 1366px) {
     #reportPopup #gpsBtn {
         display: none !important;
     }
