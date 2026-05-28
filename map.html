@@ -1,11 +1,13 @@
-﻿<!DOCTYPE html>
-<html>
+<!DOCTYPE html>
+<html lang="th">
 <head>
-    <title>CMU Report</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMU Report — แผนที่แจ้งปัญหา</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
     <link rel="stylesheet" href="style.css"/>
     <style>
-        /* ๐”” TOAST NOTIFICATION */
+        /* TOAST NOTIFICATION */
         #toast {
             position: fixed;
             top: 20px;
@@ -19,69 +21,89 @@
             z-index: 9999;
             font-family: sans-serif;
         }
+        /* Back button */
+        #back-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 2000;
+            padding: 8px 14px;
+            background: #1E2D5A;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-family: sans-serif;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        #back-btn:hover { background: #2563EB; }
     </style>
 </head>
 <body>
 
   <div id="toast"></div>
 
+  <!-- ปุ่มกลับหน้าหลัก -->
+  <button id="back-btn" onclick="window.location.href='cmu-report-final9.html'">← หน้าหลัก</button>
+
   <div id="adminControls" class="admin-controls-container" style="display: none;">
       <div id="adminLoginBox" class="admin-login-controls">
           <div class="admin-login-content">
-              <span class="close-admin" onclick="toggleAdminControls()">ร—</span>
+              <span class="close-admin" onclick="toggleAdminControls()">×</span>
               <h4>Admin Login</h4>
               <input id="adminEmail" placeholder="email">
               <input id="adminPassword" type="password" placeholder="password">
               <button onclick="login()">Login</button>
-              <p id="loginStatus">เธขเธฑเธเนเธกเนเนเธ”เน login</p>
+              <p id="loginStatus">ยังไม่ได้ login</p>
           </div>
       </div>
 
       <div id="adminDashboardBox" class="admin-dashboard-controls" style="display: none;">
           <div class="admin-dashboard-content">
               <h4>Admin Dashboard</h4>
-              <p>เธขเธดเธเธ”เธตเธ•เนเธญเธเธฃเธฑเธ เนเธญเธ”เธกเธดเธ</p>
-              <button onclick="loadTable()">๐” Refresh เธ•เธฒเธฃเธฒเธ</button>
+              <p>ยินดีต้อนรับ แอดมิน</p>
+              <button onclick="loadTable()">🔄 Refresh ตาราง</button>
               <button onclick="logout()">Logout</button>
           </div>
       </div>
   </div>
 
   <button id="toggleAdminBtn" onclick="toggleAdminControls()" style="position: absolute; top: 10px; right: 10px; z-index: 2000; padding: 5px 10px; background: #333; color: white; border: none; border-radius: 5px; cursor: pointer; display: none;">
-      ๐” Admin
+      🔐 Admin
   </button>
 
   <div id="map"></div>
 
   <div id="reportPopup" class="report-popup-form" style="display: none;">
     <div class="popup-form-content">
-      <span class="close-popup" onclick="hideReportPopup()">ร—</span>
-      <h4>เนเธเนเธเธเธฑเธเธซเธฒ (เธซเธฅเธฑเธเธเธฒเธเธเธฑเธเธซเธกเธธเธ”เธชเธณเน€เธฃเนเธ)</h4>
-      <label for="category">๐ท๏ธ เธซเธกเธงเธ”เธซเธกเธนเนเธเธฑเธเธซเธฒ:</label>
+      <span class="close-popup" onclick="hideReportPopup()">×</span>
+      <h4>แจ้งปัญหา (หลังจากปักหมุดสำเร็จ)</h4>
+      <label for="category">🏷️ หมวดหมู่ปัญหา:</label>
       <select id="category">
-        <option value="๐’ก เนเธเธเนเธฒ / เธซเธฅเธญเธ”เนเธ">๐’ก เนเธเธเนเธฒ / เธซเธฅเธญเธ”เนเธเธเธฒเธ”</option>
-        <option value="๐ข เธญเธฒเธเธฒเธฃ / เนเธญเธฃเนเธซเนเธญเธเน€เธฃเธตเธขเธ">๐ข เธญเธฒเธเธฒเธฃ / เนเธญเธฃเน / เธญเธธเธเธเธฃเธ“เนเธซเนเธญเธเน€เธฃเธตเธขเธ</option>
-        <option value="๐’ง เธซเนเธญเธเธเนเธณ / เธ—เนเธญเธเธฃเธฐเธเธฒ">๐’ง เธซเนเธญเธเธเนเธณ / เธ—เนเธญเธเธฃเธฐเธเธฒ</option>
-        <option value="๐ฃ๏ธ เธ–เธเธ / เธ—เธตเนเธเธญเธ”เธฃเธ–">๐ฃ๏ธ เธ–เธเธ / เธ—เธฒเธเน€เธ”เธดเธ / เธ—เธตเนเธเธญเธ”เธฃเธ–</option>
-        <option value="๐—‘๏ธ เธเธขเธฐ / เธเธงเธฒเธกเธชเธฐเธญเธฒเธ”">๐—‘๏ธ เธเธขเธฐ / เธเธงเธฒเธกเธชเธฐเธญเธฒเธ”เธเธทเนเธเธ—เธตเน</option>
-        <option value="๐ เธญเธดเธเน€เธ—เธญเธฃเนเน€เธเนเธ• / Wi-Fi">๐ เธญเธดเธเน€เธ—เธญเธฃเนเน€เธเนเธ• / Wi-Fi</option>
-        <option value="๐ถ เธชเธฑเธ•เธงเนเธเธฃเธเธฑเธ” / เธชเธฑเธ•เธงเนเธกเธตเธเธดเธฉ">๐ถ เธชเธฑเธ•เธงเนเธเธฃเธเธฑเธ” / เธชเธฑเธ•เธงเนเธกเธตเธเธดเธฉ</option>
-        <option value="โ“ เธญเธทเนเธเน">โ“ เธญเธทเนเธเน</option>
+        <option value="💡 ไฟฟ้า / หลอดไฟ">💡 ไฟฟ้า / หลอดไฟขาด</option>
+        <option value="🏢 อาคาร / แอร์ห้องเรียน">🏢 อาคาร / แอร์ / อุปกรณ์ห้องเรียน</option>
+        <option value="💧 ห้องน้ำ / ท่อประปา">💧 ห้องน้ำ / ท่อประปา</option>
+        <option value="🛣️ ถนน / ที่จอดรถ">🛣️ ถนน / ทางเดิน / ที่จอดรถ</option>
+        <option value="🗑️ ขยะ / ความสะอาด">🗑️ ขยะ / ความสะอาดพื้นที่</option>
+        <option value="🌐 อินเทอร์เน็ต / Wi-Fi">🌐 อินเทอร์เน็ต / Wi-Fi</option>
+        <option value="🐶 สัตว์จรจัด / สัตว์มีพิษ">🐶 สัตว์จรจัด / สัตว์มีพิษ</option>
+        <option value="❓ อื่นๆ">❓ อื่นๆ</option>
       </select>
 
-      <input type="text" id="title" placeholder="เธเธฑเธเธซเธฒเธญเธฐเนเธฃ (เน€เธเนเธ เนเธญเธฃเนเนเธกเนเน€เธขเนเธ)"/>
-      <textarea id="detail" placeholder="เธฃเธฒเธขเธฅเธฐเน€เธญเธตเธขเธ” (เน€เธเนเธ เธญเนเธฒเธเน€เน€เธเนเธงเธซเธฃเธทเธญเธเธทเนเธญเธเธ“เธฐ)"></textarea>
+      <input type="text" id="title" placeholder="ปัญหาอะไร (เช่น แอร์ไม่เย็น)"/>
+      <textarea id="detail" placeholder="รายละเอียด (เช่น อ่างแก้วหรือชื่อคณะ)"></textarea>
       
       <input type="file" id="imageInput" accept="image/*"/>
       
-      <button type="button" id="gpsBtn" onclick="getUserLocation()">๐“ เนเธเนเธ•เธณเนเธซเธเนเธเธเธฑเธเธเธธเธเธฑเธเธเธญเธเธเธฑเธ</button>
-      <button id="submitBtn">เนเธเนเธเธเธฑเธเธซเธฒ</button>
+      <button type="button" id="gpsBtn" onclick="getUserLocation()">📍 ใช้ตำแหน่งปัจจุบันของฉัน</button>
+      <button id="submitBtn">แจ้งปัญหา</button>
     </div>
   </div>
 
   <div id="adminPanel" style="display: none;">
-      <h4>๐“ Admin Dashboard (เธ•เธฒเธฃเธฒเธเธฃเธฒเธขเธเธฒเธ)</h4>
-      <button onclick="loadTable()">๐” Refresh</button>
+      <h4>📊 Admin Dashboard (ตารางรายงาน)</h4>
+      <button onclick="loadTable()">🔄 Refresh</button>
       <table border="1">
           <thead>
               <tr>
@@ -94,7 +116,7 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
-  <!-- Local Storage Mock Firebase (เธเธธเธ“เธชเธฒเธกเธฒเธฃเธ–เน€เธญเธฒเธเธญเธกเน€เธกเธเธ•เนเธเธญเธเธเธฃเธดเธเธญเธญเธเนเธ”เนเธซเธฒเธเธ•เนเธญเธเธเธฒเธฃเธเธฅเธฑเธเนเธเนเธเน Firebase เธเธฃเธดเธ) -->
+  <!-- Local Storage Mock Firebase -->
   <script src="mock-firebase.js"></script>
   <!--
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
