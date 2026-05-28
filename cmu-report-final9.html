@@ -409,6 +409,17 @@ body{font-family:'IBM Plex Sans Thai',sans-serif;background:#F0F4F8;color:var(--
   .auth-head { padding: 20px 24px 16px; }
   .auth-body { padding: 20px 24px; }
 }
+
+/* RATING STARS (Global) */
+.rating-stars span {
+  color: var(--gray-3);
+  transition: all 0.15s;
+}
+.rating-stars span.hover, .rating-stars span.active {
+  color: #F59E0B !important; /* สีทองดาว */
+  transform: scale(1.12);
+  display: inline-block;
+}
 </style>
 </head>
 <body>
@@ -696,6 +707,39 @@ body{font-family:'IBM Plex Sans Thai',sans-serif;background:#F0F4F8;color:var(--
           ยังไม่มีการระบุข้อมูล
         </div>
       </div>
+
+      <!-- ส่วนของการประเมินความพึงพอใจโดยผู้ใช้ (1-5 ดาว + ข้อเสนอแนะ) -->
+      <div id="dtm-rating-box" style="border-top:1.5px dashed var(--gray-3); padding-top:16px; margin-top:16px; display:none;">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+          <div style="font-size:18px;">⭐</div>
+          <div>
+            <div style="font-size:11.5px; font-weight:700; color:var(--navy);">ประเมินความพึงพอใจการแก้ไขปัญหา</div>
+            <div style="font-size:9px; color:var(--gray-4);">คะแนนของคุณช่วยเราพัฒนาบริการให้ดียิ่งขึ้น</div>
+          </div>
+        </div>
+        
+        <!-- ตัวเลือกดาว -->
+        <div class="rating-stars" style="display:flex; gap:8px; font-size:26px; cursor:pointer; margin-bottom:10px; justify-content:center; user-select:none;">
+          <span class="star" data-value="1" onclick="setRating(1)">☆</span>
+          <span class="star" data-value="2" onclick="setRating(2)">☆</span>
+          <span class="star" data-value="3" onclick="setRating(3)">☆</span>
+          <span class="star" data-value="4" onclick="setRating(4)">☆</span>
+          <span class="star" data-value="5" onclick="setRating(5)">☆</span>
+        </div>
+        
+        <!-- ฟอร์มกรอกข้อคิดเห็น -->
+        <div id="dtm-feedback-form">
+          <textarea id="dtm-feedback-text" placeholder="ระบุคำติชม/ข้อเสนอแนะเพิ่มเติม..." style="width:100%; height:60px; padding:8px 10px; border-radius:8px; border:1px solid var(--gray-3); font-size:12px; font-family:inherit; resize:none; outline:none; box-sizing:border-box; margin-bottom:8px;"></textarea>
+          <button id="dtm-submit-rating-btn" onclick="submitReportRating()" style="width:100%; padding:8px 12px; border-radius:8px; border:none; background:var(--green); color:#fff; font-size:12.5px; font-weight:700; cursor:pointer; font-family:inherit; transition:all 0.18s;">ส่งการประเมิน</button>
+        </div>
+        
+        <!-- แสดงเมื่อมีการประเมินเสร็จแล้ว -->
+        <div id="dtm-feedback-saved" style="display:none; background:var(--blue-light); border:1px solid #BFDBFE; color:var(--blue); border-radius:8px; padding:10px; font-size:12px; text-align:center; line-height:1.6;">
+          <div style="font-weight:700; margin-bottom:4px; font-size:13px;" id="dtm-saved-stars">⭐⭐⭐⭐⭐ (5/5)</div>
+          <div id="dtm-saved-comment" style="font-style:italic;">"แก้ไขได้รวดเร็วดีเยี่ยม"</div>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -721,7 +765,7 @@ body{font-family:'IBM Plex Sans Thai',sans-serif;background:#F0F4F8;color:var(--
 </div>
 
 <!-- Local Storage Mock Firebase (คุณสามารถเอาคอมเมนต์ของจริงออกได้หากต้องการกลับไปใช้ Firebase จริง) -->
-<script src="mock-firebase.js?v=1.7"></script>
+<script src="mock-firebase.js?v=1.8"></script>
 <!--
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -1153,6 +1197,21 @@ async function loadUserReports(userId) {
           <div class="rep-msg">${r.reply}</div>
           <div class="rep-ref">📋 อ้างอิง: ${r.title}</div>
         </div>`).join('');
+
+  // Auto-popup unrated resolved reports for the user
+  if (!showAsAdmin) {
+    const unratedResolvedReport = reports.find(r => r.status === 'เสร็จแล้ว' && !r.rating);
+    if (unratedResolvedReport) {
+      const storageKey = 'prompt_rating_' + unratedResolvedReport.id;
+      if (!sessionStorage.getItem(storageKey)) {
+        sessionStorage.setItem(storageKey, 'true');
+        setTimeout(() => {
+          showReportDetail(unratedResolvedReport.id);
+          toast('🎉 ปัญหาของคุณได้รับการแก้ไขแล้ว! กรุณาช่วยประเมินความพึงพอใจด้วยค่ะ/ครับ', 'ok');
+        }, 1500);
+      }
+    }
+  }
 }
 
 // ========== ADMIN CONTROL FROM DROPDOWN MENU PANEL ==========
@@ -1271,6 +1330,48 @@ function showReportDetail(id) {
     replyMsg.style.color = '#6B7280';
   }
   
+  // Track active detail report ID for rating submission
+  window.activeDetailReportId = id;
+
+  // จัดการการแสดงผลกล่องประเมินความพึงพอใจ
+  const ratingBox = document.getElementById('dtm-rating-box');
+  if (ratingBox) {
+    if (status === 'เสร็จแล้ว') {
+      ratingBox.style.display = 'block';
+      
+      const isCreator = currentUser && r.user_id === currentUser.uid;
+      const feedbackForm = document.getElementById('dtm-feedback-form');
+      const feedbackSaved = document.getElementById('dtm-feedback-saved');
+      
+      if (r.rating) {
+        // มีการประเมินแล้ว -> แสดงผลลัพธ์
+        feedbackForm.style.display = 'none';
+        feedbackSaved.style.display = 'block';
+        
+        let starsHtml = '';
+        for (let i = 1; i <= 5; i++) {
+          starsHtml += i <= r.rating ? '⭐' : '☆';
+        }
+        document.getElementById('dtm-saved-stars').textContent = `${starsHtml} (${r.rating}/5)`;
+        document.getElementById('dtm-saved-comment').textContent = r.rating_comment ? `"${r.rating_comment}"` : '"ไม่มีความเห็นเพิ่มเติม"';
+      } else {
+        if (isCreator) {
+          // ยังไม่ได้ประเมิน และผู้เปิดเป็นผู้แจ้ง -> เปิดฟอร์มให้กรอก
+          feedbackForm.style.display = 'block';
+          feedbackSaved.style.display = 'none';
+          document.getElementById('dtm-feedback-text').value = '';
+          setRating(0); // เคลียร์ดาว
+        } else {
+          // ไม่ใช่ผู้แจ้งและยังไม่ได้ประเมิน -> ซ่อนกล่อง
+          ratingBox.style.display = 'none';
+        }
+      }
+    } else {
+      // ยังไม่เสร็จสิ้น -> ซ่อนกล่อง
+      ratingBox.style.display = 'none';
+    }
+  }
+
   // Show Modal
   document.getElementById('detail-modal').style.display = 'flex';
 }
@@ -1283,6 +1384,91 @@ function closeDetailModal(e) {
 
 window.showReportDetail = showReportDetail;
 window.closeDetailModal = closeDetailModal;
+
+// ========== RATING STAR SELECTOR & SUBMISSION ==========
+let currentRatingValue = 0;
+
+function setRating(val) {
+  currentRatingValue = val;
+  const stars = document.querySelectorAll('#dtm-rating-box .rating-stars .star');
+  stars.forEach((star, idx) => {
+    if (idx < val) {
+      star.textContent = '★';
+      star.classList.add('active');
+    } else {
+      star.textContent = '☆';
+      star.classList.remove('active');
+    }
+  });
+}
+
+async function submitReportRating() {
+  if (!window.activeDetailReportId) return;
+  if (currentRatingValue === 0) {
+    toast('⚠️ กรุณาเลือกคะแนนความพึงพอใจ 1-5 ดาวก่อนส่งข้อมูลค่ะ/ครับ', 'er');
+    return;
+  }
+  
+  const comment = document.getElementById('dtm-feedback-text').value.trim();
+  const submitBtn = document.getElementById('dtm-submit-rating-btn');
+  
+  try {
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = '⏳ กำลังส่งการประเมิน...';
+    }
+    
+    await db.collection('reports').doc(window.activeDetailReportId).update({
+      rating: currentRatingValue,
+      rating_comment: comment,
+      updated_at: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    
+    toast('⭐ ขอบคุณสำหรับความคิดเห็นและการประเมินของท่านค่ะ/ครับ!', 'ok');
+    
+    // โหลดรายงานของ user ใหม่เพื่ออัปเดต UI ทันที
+    if (currentUser) {
+      await loadUserReports(currentUser.uid);
+    }
+    await loadStats();
+    
+    // โหลดรายละเอียดหน้านี้ใหม่ เพื่อซ่อนฟอร์มประเมินและแสดงผลที่เซฟแล้ว
+    showReportDetail(window.activeDetailReportId);
+  } catch(e) {
+    console.error('submitReportRating error:', e);
+    toast('❌ เกิดข้อผิดพลาดในการส่งข้อมูล: ' + e.message, 'er');
+  } finally {
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'ส่งการประเมิน';
+    }
+  }
+}
+
+// Bind hover listeners for rating stars
+document.addEventListener('DOMContentLoaded', () => {
+  const stars = document.querySelectorAll('#dtm-rating-box .rating-stars .star');
+  stars.forEach((star) => {
+    star.addEventListener('mouseover', () => {
+      const val = parseInt(star.getAttribute('data-value'));
+      stars.forEach((s, idx) => {
+        if (idx < val) {
+          s.classList.add('hover');
+        } else {
+          s.classList.remove('hover');
+        }
+      });
+    });
+    star.addEventListener('mouseout', () => {
+      stars.forEach((s) => {
+        s.classList.remove('hover');
+      });
+    });
+  });
+});
+
+window.setRating = setRating;
+window.submitReportRating = submitReportRating;
 
 // ========== GO REPORT ==========
 let pendingRedirectToMap = false;
