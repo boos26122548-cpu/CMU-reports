@@ -175,7 +175,9 @@ body { margin: 0; padding: 0; height: 100vh; font-family: sans-serif; overflow: 
     position: fixed;
     bottom: 20px;
     left: 20px;
-    z-index: 2000;
+    z-index: 9999 !important; /* ตั้ง z-index ให้สูงที่สุดเพื่อป้องกันการทับซ้อนใน Safari */
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0); /* แก้บั๊ก Safari วาดปุ่มซ่อนหลังแผนที่ */
     padding: 12px 18px;
     background: #28a745;
     color: white;
