@@ -241,11 +241,21 @@ db.collection('reports').onSnapshot(() => {
 // 🧾 ฟังก์ชันแสดง Popup Form
 function showReportPopup() {
   reportPopup.style.display = 'block';
+  // ซ่อนปุ่ม GPS ลอยเมื่อหน้าต่างแจ้งปัญหาเปิดอยู่บนมือถือ/ไอแพด
+  const mobileGpsBtn = document.getElementById('mobileGpsBtn');
+  if (mobileGpsBtn) {
+    mobileGpsBtn.style.display = 'none';
+  }
 }
 
 // 🧾 ฟังก์ชันซ่อน Popup Form
 function hideReportPopup() {
   reportPopup.style.display = 'none';
+  // แสดงปุ่ม GPS ลอยกลับขึ้นมาเมื่อปิดหน้าต่าง และขนาดหน้าจอยังเป็นมือถือ/ไอแพด
+  const mobileGpsBtn = document.getElementById('mobileGpsBtn');
+  if (mobileGpsBtn && window.innerWidth <= 1024) {
+    mobileGpsBtn.style.display = 'flex';
+  }
 }
 
 // 📤 SUBMIT (Firebase)
@@ -410,3 +420,50 @@ function logout() {
 
 // 🚀 START
 loadReports();
+
+// 📍 ฟังก์ชันดึงพิกัด GPS สำหรับมือถือ/ไอแพด (ปุ่มลอยซ้ายล่าง)
+function getUserLocationMobile() {
+  const mobileGpsBtn = document.getElementById('mobileGpsBtn');
+  
+  if (!navigator.geolocation) {
+    alert("เบราว์เซอร์ของคุณไม่รองรับการดึงพิกัด GPS");
+    return;
+  }
+
+  const originalHtml = mobileGpsBtn.innerHTML;
+  mobileGpsBtn.innerHTML = "⏳ กำลังค้นหาตำแหน่ง...";
+  mobileGpsBtn.disabled = true;
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      selectedLat = position.coords.latitude;
+      selectedLng = position.coords.longitude;
+
+      if (tempMarker) map.removeLayer(tempMarker);
+
+      tempMarker = L.marker([selectedLat, selectedLng], {
+        draggable: true 
+      }).addTo(map);
+
+      map.setView([selectedLat, selectedLng], 17); 
+
+      mobileGpsBtn.innerHTML = originalHtml;
+      mobileGpsBtn.disabled = false;
+      showReportPopup();
+      showToast("✅ ปักหมุดตามพิกัด GPS สำเร็จ");
+    },
+    (error) => {
+      console.error("GPS Error:", error);
+      alert("ไม่สามารถเข้าถึง GPS ได้ กรุณาอนุญาตเปิดสิทธิ์เข้าถึงตำแหน่งบนเบราว์เซอร์");
+      mobileGpsBtn.innerHTML = originalHtml;
+      mobileGpsBtn.disabled = false;
+    },
+    {
+      enableHighAccuracy: true, 
+      timeout: 8000,            
+      maximumAge: 0             
+    }
+  );
+}
+
+window.getUserLocationMobile = getUserLocationMobile;
