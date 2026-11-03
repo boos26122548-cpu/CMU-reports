@@ -97,6 +97,19 @@ try {
   console.error("Admin session restore error:", e);
 }
 
+function updateMapAuthBtn() {
+  const mapLoginBtn = document.getElementById('nav-login-btn-map');
+  if (mapLoginBtn) {
+    if (isAdmin) {
+      mapLoginBtn.innerHTML = '👑 แอดมิน (เข้าสู่ระบบแล้ว)';
+      mapLoginBtn.style.background = '#16A34A';
+    } else {
+      mapLoginBtn.innerHTML = '🔑 เข้าสู่ระบบ';
+      mapLoginBtn.style.background = '#1E2D5A';
+    }
+  }
+}
+
 // Dynamically track auth status in script.js
 auth.onAuthStateChanged(user => {
   if (user && user.email === 'cmu-admin@cmu.ac.th') {
@@ -107,6 +120,7 @@ auth.onAuthStateChanged(user => {
     localStorage.removeItem('cmu_current_user');
     isAdmin = false;
   }
+  updateMapAuthBtn();
   loadReports();
 });
 
@@ -634,6 +648,7 @@ function logout() {
 // 🚀 START
 loadReports();
 showReportPopup();
+updateMapAuthBtn();
 
 // 📍 ฟังก์ชันดึงพิกัด GPS สำหรับมือถือ/ไอแพด (ปุ่มลอยซ้ายล่าง)
 function getUserLocationMobile() {

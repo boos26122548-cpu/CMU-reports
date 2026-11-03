@@ -451,6 +451,13 @@ body{font-family:'IBM Plex Sans Thai',sans-serif;background:#F0F4F8;color:var(--
 
     <!-- ปุ่มประวัติการแจ้งสำหรับผู้ใช้ -->
     <a class="nav-guide" id="nav-history-btn" href="#" onclick="openPanel('reports'); return false;" style="display:flex; align-items:center; gap:6px;">📋 <span>ประวัติการแจ้ง</span> <span class="dd-badge" id="badge-report-guest" style="background:var(--red); color:#fff; font-size:10px; font-weight:700; padding:1px 6px; border-radius:20px; line-height: 1;">0</span></a>
+    
+    <!-- ปุ่ม Login ที่แถบเมนูด้านบน -->
+    <button class="nav-login-btn" id="nav-login-btn" onclick="openAuth()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+      <span>เข้าสู่ระบบ</span>
+    </button>
+
     <div class="av-wrap" id="av-wrap" style="display:none">
       <div class="av" id="av-el" onclick="toggleDD()">ก</div>
       <div class="dd" id="dd-el">
@@ -817,7 +824,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const fbAuth = firebase.auth();
 const fbStorage = firebase.storage();
-const MAP_PAGE = 'map.html?v=3.1';
+const MAP_PAGE = 'map.html?v=3.2';
 const GUIDE_PDF = 'manual.pdf';
 const FEEDBACK_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSft5glhL0K5yAbAeBuxfvvNEU1aPiJmPVblzNLmh7o6qZy8SA/viewform';
 
@@ -994,6 +1001,7 @@ function onLoginSuccess(user) {
   document.getElementById('av-wrap').style.display = 'flex';
   const hb = document.getElementById('nav-history-btn'); if(hb) hb.style.display='none';
   const sf = document.getElementById('footer-staff-login-btn'); if(sf) sf.style.display='none';
+  const lb = document.getElementById('nav-login-btn'); if(lb) lb.style.display='none';
 
   // Toggle Admin / User view switcher button
   const switchBtn = document.getElementById('dd-switch-role-btn');
@@ -1877,6 +1885,7 @@ fbAuth.onAuthStateChanged(user => {
     document.getElementById('av-wrap').style.display = 'none';
     const hb = document.getElementById('nav-history-btn'); if(hb) hb.style.display='flex';
     const sf = document.getElementById('footer-staff-login-btn'); if(sf) sf.style.display='flex';
+    const lb = document.getElementById('nav-login-btn'); if(lb) lb.style.display='flex';
     
     // Clear user from localStorage
     localStorage.removeItem('cmu_current_user');
