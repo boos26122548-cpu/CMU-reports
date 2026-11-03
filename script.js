@@ -35,21 +35,55 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 let selectedLat = null;
 let selectedLng = null;
 
-// ไอคอนสีน้ำเงินสำหรับปักหมุดชั่วคราว (แก้บั๊ก Leaflet หาไฟล์รูปหมุดเริ่มต้นไม่เจอในมือถือ/iPad)
-const blueIcon = L.icon({
-  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41]
-});
+// 🎨 MAP OF DISTINCT COLORS FOR CATEGORIES & STATUS
+const categoryColorMap = {
+  "🗑️ จุดทิ้งขยะ": "#6B7280",      // สีเทาเข้ม
+  "🅿️ ที่จอดรถ": "#2563EB",        // สีน้ำเงินสด
+  "🚬 ที่สูบบุหรี่": "#111827",      // สีดำเข้ม
+  "🛣️ ถนน": "#9333EA",            // สีม่วงเข้ม
+  "🚶 ทางม้าลาย": "#DB2777",        // สีชมพูบานเย็น
+  "💻 Co-working Space": "#0891B2", // สีฟ้าคราม
+  "❓ อื่นๆ": "#D97706"             // สีเหลืองอำพัน
+};
+
+function getSelectedCategoryColor() {
+  const catEl = document.getElementById('category');
+  const cat = catEl ? catEl.value : '';
+  return categoryColorMap[cat] || '#2563EB';
+}
+
+function getPinIcon(color) {
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="44" viewBox="0 0 28 42">
+      <path d="M14 0 C6.27 0 0 6.27 0 14 C0 24.5 14 42 14 42 C14 42 28 24.5 28 14 C28 6.27 21.73 0 14 0 Z" fill="${color}" stroke="#ffffff" stroke-width="2"/>
+      <circle cx="14" cy="14" r="5.5" fill="#ffffff" opacity="0.95"/>
+    </svg>`;
+  return L.divIcon({
+    html: svg,
+    className: 'custom-pin-marker',
+    iconSize: [30, 44],
+    iconAnchor: [15, 44],
+    popupAnchor: [0, -40]
+  });
+}
 
 // 🧠 MARKERS
 let markerGroup = L.layerGroup().addTo(map);
 
 // 📍 TEMP MARKER
 let tempMarker = null;
+
+// อัปเดตสีหมุดชั่วคราวแบบเรียลไทม์เมื่อเปลี่ยนหมวดหมู่
+document.addEventListener('DOMContentLoaded', () => {
+  const catSelect = document.getElementById('category');
+  if (catSelect) {
+    catSelect.addEventListener('change', () => {
+      if (tempMarker) {
+        tempMarker.setIcon(getPinIcon(getSelectedCategoryColor()));
+      }
+    });
+  }
+});
 
 // 👑 ADMIN
 let isAdmin = false;
@@ -115,20 +149,15 @@ map.on('click', (e) => {
 
   tempMarker = L.marker([selectedLat, selectedLng], {
     draggable: true,
-    icon: blueIcon
+    icon: getPinIcon(getSelectedCategoryColor())
   }).addTo(map);
   
   showReportPopup(); 
 });
 
-// 🧠 LOAD REPORTS (Firebase)
+// 🧠 LOAD REPORTS (Firebase) - แสดงหมุดให้ทุกคนเห็นบนแผนที่
 async function loadReports() {
   markerGroup.clearLayers();
-
-  // 👑 ตรวจสอบว่าเป็นแอดมินหรือไม่ หากไม่ใช่แอดมิน ไม่ต้องโหลดหมุด
-  if (!isAdmin) {
-    return;
-  }
 
   try {
     const snapshot = await db.collection('reports').get();
@@ -137,38 +166,15 @@ async function loadReports() {
       const r = doc.data();
       r.id = doc.id;
 
-      // สีหมุดตามสถานะ (กำลังดำเนินการ, ส่งต่อ, เสร็จแล้ว คงเดิม)
-      // สีหมุดตามหมวดหมู่ (เฉพาะ รอรับเรื่อง)
-      const categoryColorMap = {
-        "🗑️ จุดทิ้งขยะ": "#6B7280",
-        "🅿️ ที่จอดรถ": "#2563EB",
-        "🚬 ที่สูบบุหรี่": "#1F2937",
-        "🛣️ ถนน": "#A855F7",
-        "🚶 ทางม้าลาย": "#EC4899",
-        "💻 Co-working Space": "#06B6D4",
-        "❓ อื่นๆ": "#F59E0B"
-      };
-
+      // สีหมุดตามสถานะ (กำลังดำเนินการ = ส้ม, เสร็จแล้ว = เขียว, ส่งต่อ = แดง)
+      // สีหมุดตามหมวดหมู่ (เมื่อเป็นสถานะ รอรับเรื่อง)
       let pinColor;
-      if (r.status === "เสร็จแล้ว") pinColor = "#16A34A";
-      else if (r.status === "กำลังดำเนินการ") pinColor = "#EA580C";
-      else if (r.status === "ส่งต่อ") pinColor = "#DC2626";
-      else pinColor = categoryColorMap[r.category] || "#DC2626";
+      if (r.status === "เสร็จแล้ว") pinColor = "#16A34A";           // เขียวสดใส
+      else if (r.status === "กำลังดำเนินการ") pinColor = "#EA580C"; // ส้มแสดชัดเจน
+      else if (r.status === "ส่งต่อ") pinColor = "#DC2626";         // แดงสด
+      else pinColor = categoryColorMap[r.category] || "#6B7280";    // ตามหมวดหมู่
 
-      const svgPin = `
-        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="42" viewBox="0 0 28 42">
-          <path d="M14 0 C6.27 0 0 6.27 0 14 C0 24.5 14 42 14 42 C14 42 28 24.5 28 14 C28 6.27 21.73 0 14 0 Z" fill="${pinColor}" stroke="#fff" stroke-width="1.5"/>
-          <circle cx="14" cy="14" r="6" fill="#fff" opacity="0.9"/>
-        </svg>`;
-
-      const customIcon = L.divIcon({
-        html: svgPin,
-        className: '',
-        iconSize: [28, 42],
-        iconAnchor: [14, 42],
-        popupAnchor: [0, -36]
-      });
-
+      const customIcon = getPinIcon(pinColor);
       const marker = L.marker([r.lat, r.lng], { icon: customIcon });
 
       let imgHtml = r.image_url ? `<br><img src="${r.image_url}" style="width:100%; border-radius:5px; margin-top:5px;"/>` : "";
@@ -553,7 +559,7 @@ function getUserLocation() {
 
       tempMarker = L.marker([selectedLat, selectedLng], {
         draggable: true,
-        icon: blueIcon
+        icon: getPinIcon(getSelectedCategoryColor())
       }).addTo(map);
 
       map.setView([selectedLat, selectedLng], 17); 
@@ -627,6 +633,7 @@ function logout() {
 
 // 🚀 START
 loadReports();
+showReportPopup();
 
 // 📍 ฟังก์ชันดึงพิกัด GPS สำหรับมือถือ/ไอแพด (ปุ่มลอยซ้ายล่าง)
 function getUserLocationMobile() {
@@ -650,7 +657,7 @@ function getUserLocationMobile() {
 
       tempMarker = L.marker([selectedLat, selectedLng], {
         draggable: true,
-        icon: blueIcon
+        icon: getPinIcon(getSelectedCategoryColor())
       }).addTo(map);
 
       map.setView([selectedLat, selectedLng], 17); 

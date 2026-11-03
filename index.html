@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>CMU Report</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -542,12 +545,27 @@ body{font-family:'IBM Plex Sans Thai',sans-serif;background:#F0F4F8;color:var(--
       <button class="tab" data-status="ส่งต่อ" onclick="setTab(this)">ส่งต่อ</button>
       <button class="tab" data-status="เสร็จแล้ว" onclick="setTab(this)">เสร็จสิ้น</button>
     </div>
-    <div class="filter-dropdown-wrap" style="position:relative; display:inline-block;">
-      <button id="filter-btn" onclick="toggleFilterDD(event)" style="display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;border:1px solid var(--gray-3);background:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;box-shadow:0 1px 3px rgba(0,0,0,.06)">⚙️ ตัวกรอง</button>
-      <div id="filter-dd" class="dd" style="position:absolute; top:calc(100% + 6px); right:0; background:#fff; border:1px solid var(--gray-3); border-radius:10px; box-shadow:var(--shadow-lg); min-width:140px; padding:6px; z-index:300; display:none; animation:fdDown .18s ease; flex-direction:column; gap:4px;">
-        <div class="filter-dd-item" onclick="selectSort('all', 'ทั้งหมด')" style="padding:8px 12px; border-radius:6px; font-size:12.5px; font-weight:600; color:var(--gray-6); cursor:pointer; display:flex; align-items:center; gap:6px; transition:all 0.15s;" onmouseover="this.style.background='var(--gray-1)';" onmouseout="this.style.background='none';">📋 ทั้งหมด</div>
-        <div class="filter-dd-item" onclick="selectSort('newest', 'ล่าสุด')" style="padding:8px 12px; border-radius:6px; font-size:12.5px; font-weight:600; color:var(--gray-6); cursor:pointer; display:flex; align-items:center; gap:6px; transition:all 0.15s;" onmouseover="this.style.background='var(--gray-1)';" onmouseout="this.style.background='none';">✨ ล่าสุด</div>
-        <div class="filter-dd-item" onclick="selectSort('oldest', 'ก่อน')" style="padding:8px 12px; border-radius:6px; font-size:12.5px; font-weight:600; color:var(--gray-6); cursor:pointer; display:flex; align-items:center; gap:6px; transition:all 0.15s;" onmouseover="this.style.background='var(--gray-1)';" onmouseout="this.style.background='none';">⏳ ก่อน</div>
+    <div style="display:flex; gap:8px; align-items:center;">
+      <div class="filter-dropdown-wrap" style="position:relative; display:inline-block;">
+        <button id="cat-filter-btn" onclick="toggleCatFilterDD(event)" style="display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;border:1px solid var(--gray-3);background:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;box-shadow:0 1px 3px rgba(0,0,0,.06)">🏷️ หมวดหมู่: ทั้งหมด</button>
+        <div id="cat-filter-dd" class="dd" style="position:absolute; top:calc(100% + 6px); right:0; background:#fff; border:1px solid var(--gray-3); border-radius:10px; box-shadow:var(--shadow-lg); min-width:180px; padding:6px; z-index:300; display:none; animation:fdDown .18s ease; flex-direction:column; gap:4px;">
+          <div class="filter-dd-item" onclick="selectCat('all', 'ทั้งหมด')" style="padding:8px 12px; border-radius:6px; font-size:12.5px; font-weight:600; color:var(--gray-6); cursor:pointer; display:flex; align-items:center; gap:6px;">📋 ทั้งหมด</div>
+          <div class="filter-dd-item" onclick="selectCat('🗑️ จุดทิ้งขยะ', '🗑️ จุดทิ้งขยะ')" style="padding:8px 12px; border-radius:6px; font-size:12.5px; font-weight:600; color:var(--gray-6); cursor:pointer; display:flex; align-items:center; gap:6px;">🗑️ จุดทิ้งขยะ</div>
+          <div class="filter-dd-item" onclick="selectCat('🅿️ ที่จอดรถ', '🅿️ ที่จอดรถ')" style="padding:8px 12px; border-radius:6px; font-size:12.5px; font-weight:600; color:var(--gray-6); cursor:pointer; display:flex; align-items:center; gap:6px;">🅿️ ที่จอดรถ</div>
+          <div class="filter-dd-item" onclick="selectCat('🚬 ที่สูบบุหรี่', '🚬 ที่สูบบุหรี่')" style="padding:8px 12px; border-radius:6px; font-size:12.5px; font-weight:600; color:var(--gray-6); cursor:pointer; display:flex; align-items:center; gap:6px;">🚬 ที่สูบบุหรี่</div>
+          <div class="filter-dd-item" onclick="selectCat('🛣️ ถนน', '🛣️ ถนน')" style="padding:8px 12px; border-radius:6px; font-size:12.5px; font-weight:600; color:var(--gray-6); cursor:pointer; display:flex; align-items:center; gap:6px;">🛣️ ถนน</div>
+          <div class="filter-dd-item" onclick="selectCat('🚶 ทางม้าลาย', '🚶 ทางม้าลาย')" style="padding:8px 12px; border-radius:6px; font-size:12.5px; font-weight:600; color:var(--gray-6); cursor:pointer; display:flex; align-items:center; gap:6px;">🚶 ทางม้าลาย</div>
+          <div class="filter-dd-item" onclick="selectCat('💻 Co-working Space', '💻 Co-working')" style="padding:8px 12px; border-radius:6px; font-size:12.5px; font-weight:600; color:var(--gray-6); cursor:pointer; display:flex; align-items:center; gap:6px;">💻 Co-working Space</div>
+          <div class="filter-dd-item" onclick="selectCat('❓ อื่นๆ', '❓ อื่นๆ')" style="padding:8px 12px; border-radius:6px; font-size:12.5px; font-weight:600; color:var(--gray-6); cursor:pointer; display:flex; align-items:center; gap:6px;">❓ อื่นๆ</div>
+        </div>
+      </div>
+      <div class="filter-dropdown-wrap" style="position:relative; display:inline-block;">
+        <button id="filter-btn" onclick="toggleFilterDD(event)" style="display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;border:1px solid var(--gray-3);background:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;box-shadow:0 1px 3px rgba(0,0,0,.06)">⚙️ ล่าสุด</button>
+        <div id="filter-dd" class="dd" style="position:absolute; top:calc(100% + 6px); right:0; background:#fff; border:1px solid var(--gray-3); border-radius:10px; box-shadow:var(--shadow-lg); min-width:140px; padding:6px; z-index:300; display:none; animation:fdDown .18s ease; flex-direction:column; gap:4px;">
+          <div class="filter-dd-item" onclick="selectSort('all', 'ทั้งหมด')" style="padding:8px 12px; border-radius:6px; font-size:12.5px; font-weight:600; color:var(--gray-6); cursor:pointer; display:flex; align-items:center; gap:6px; transition:all 0.15s;" onmouseover="this.style.background='var(--gray-1)';" onmouseout="this.style.background='none';">📋 ทั้งหมด</div>
+          <div class="filter-dd-item" onclick="selectSort('newest', 'ล่าสุด')" style="padding:8px 12px; border-radius:6px; font-size:12.5px; font-weight:600; color:var(--gray-6); cursor:pointer; display:flex; align-items:center; gap:6px; transition:all 0.15s;" onmouseover="this.style.background='var(--gray-1)';" onmouseout="this.style.background='none';">✨ ล่าสุด</div>
+          <div class="filter-dd-item" onclick="selectSort('oldest', 'ก่อน')" style="padding:8px 12px; border-radius:6px; font-size:12.5px; font-weight:600; color:var(--gray-6); cursor:pointer; display:flex; align-items:center; gap:6px; transition:all 0.15s;" onmouseover="this.style.background='var(--gray-1)';" onmouseout="this.style.background='none';">⏳ ก่อน</div>
+        </div>
       </div>
     </div>
   </div>
@@ -799,7 +817,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const fbAuth = firebase.auth();
 const fbStorage = firebase.storage();
-const MAP_PAGE = 'map.html';
+const MAP_PAGE = 'map.html?v=3.1';
 const GUIDE_PDF = 'manual.pdf';
 const FEEDBACK_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSft5glhL0K5yAbAeBuxfvvNEU1aPiJmPVblzNLmh7o6qZy8SA/viewform';
 
@@ -1662,6 +1680,7 @@ async function loadStats() {
 let allReports = [];
 let currentStatus = 'all';
 let currentSort = 'newest';
+let currentCategory = 'all';
 
 function loadCards(data) {
   allReports = data || [];
@@ -1674,15 +1693,21 @@ let filteredCache = [];
 
 function renderCards() {
   const grid = document.getElementById('card-grid');
-  let filtered = currentStatus === 'all'
-    ? allReports
-    : allReports.filter(r => {
-        const s = r.status || 'รอรับเรื่อง';
-        if (currentStatus === 'รอรับเรื่อง' || currentStatus === 'รอดำเนินการ') {
-          return s === 'รอรับเรื่อง' || s === 'รอดำเนินการ';
-        }
-        return s === currentStatus;
-      });
+  let filtered = allReports;
+  
+  if (currentStatus !== 'all') {
+    filtered = filtered.filter(r => {
+      const s = r.status || 'รอรับเรื่อง';
+      if (currentStatus === 'รอรับเรื่อง' || currentStatus === 'รอดำเนินการ') {
+        return s === 'รอรับเรื่อง' || s === 'รอดำเนินการ';
+      }
+      return s === currentStatus;
+    });
+  }
+
+  if (currentCategory !== 'all') {
+    filtered = filtered.filter(r => (r.category || '❓ อื่นๆ') === currentCategory);
+  }
 
   filtered = [...filtered].sort((a,b) => {
     if (currentSort === 'all') return 0;
@@ -1800,6 +1825,8 @@ function setSortAndRender(val) {
 
 function toggleFilterDD(e) {
   e.stopPropagation();
+  const cdd = document.getElementById('cat-filter-dd');
+  if (cdd) cdd.style.display = 'none';
   const dd = document.getElementById('filter-dd');
   const isOpen = dd.style.display === 'flex';
   dd.style.display = isOpen ? 'none' : 'flex';
@@ -1807,18 +1834,39 @@ function toggleFilterDD(e) {
 
 function selectSort(sortVal, labelText) {
   setSortAndRender(sortVal);
-  document.getElementById('filter-btn').innerHTML = `⚙️ ตัวกรอง: ${labelText}`;
+  document.getElementById('filter-btn').innerHTML = `⚙️ ${labelText}`;
   document.getElementById('filter-dd').style.display = 'none';
 }
 
-// Close filter dropdown when clicking outside
+function toggleCatFilterDD(e) {
+  e.stopPropagation();
+  const fdd = document.getElementById('filter-dd');
+  if (fdd) fdd.style.display = 'none';
+  const dd = document.getElementById('cat-filter-dd');
+  const isOpen = dd.style.display === 'flex';
+  dd.style.display = isOpen ? 'none' : 'flex';
+}
+
+function selectCat(catVal, labelText) {
+  currentCategory = catVal;
+  currentPage = 1;
+  renderCards();
+  document.getElementById('cat-filter-btn').innerHTML = `🏷️ ${labelText}`;
+  document.getElementById('cat-filter-dd').style.display = 'none';
+}
+
+// Close filter dropdowns when clicking outside
 document.addEventListener('click', () => {
   const dd = document.getElementById('filter-dd');
   if (dd) dd.style.display = 'none';
+  const cdd = document.getElementById('cat-filter-dd');
+  if (cdd) cdd.style.display = 'none';
 });
 
 window.toggleFilterDD = toggleFilterDD;
 window.selectSort = selectSort;
+window.toggleCatFilterDD = toggleCatFilterDD;
+window.selectCat = selectCat;
 
 fbAuth.onAuthStateChanged(user => {
   if (user && user.email === 'cmu-admin@cmu.ac.th') {
