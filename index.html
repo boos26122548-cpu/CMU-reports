@@ -452,10 +452,10 @@ body{font-family:'IBM Plex Sans Thai',sans-serif;background:#F0F4F8;color:var(--
     <!-- ปุ่มประวัติการแจ้งสำหรับผู้ใช้ -->
     <a class="nav-guide" id="nav-history-btn" href="#" onclick="openPanel('reports'); return false;" style="display:flex; align-items:center; gap:6px;">📋 <span>ประวัติการแจ้ง</span> <span class="dd-badge" id="badge-report-guest" style="background:var(--red); color:#fff; font-size:10px; font-weight:700; padding:1px 6px; border-radius:20px; line-height: 1;">0</span></a>
     
-    <!-- ปุ่ม Login ที่แถบเมนูด้านบน -->
+    <!-- Avatar (แสดงหลัง login) / ปุ่ม Log in บนขวาแบบเดิม -->
     <button class="nav-login-btn" id="nav-login-btn" onclick="openAuth()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-      <span>เข้าสู่ระบบ</span>
+      Log in
     </button>
 
     <div class="av-wrap" id="av-wrap" style="display:none">
@@ -604,20 +604,78 @@ body{font-family:'IBM Plex Sans Thai',sans-serif;background:#F0F4F8;color:var(--
   <div class="auth-modal">
     <div class="auth-head">
       <div class="logo">CMU REPORT</div>
-      <div class="ttl" id="auth-title">STAFF LOGIN</div>
+      <div class="ttl" id="auth-title">LOGIN</div>
     </div>
     <div class="auth-body">
 
       <!-- STEP: Login -->
       <div class="step ac" id="s-login">
-        <div style="text-align:center;margin-bottom:20px">
-          <div style="font-size:15px;font-weight:700;color:var(--navy)">STAFF LOGIN</div>
-          <div style="font-size:12px;color:var(--gray-5);margin-top:3px">ลงชื่อเข้าใช้งานสำหรับเจ้าหน้าที่แอดมิน</div>
-        </div>
-        <div class="field fi"><span class="ico">📧</span><input type="email" id="l-email" placeholder="อีเมลแอดมิน (@cmu.ac.th)"></div>
-        <div class="field fi"><span class="ico">🔒</span><input type="password" id="l-pass" placeholder="รหัสผ่าน"></div>
+        <div class="step-ind"><span class="step-txt">เข้าสู่ระบบ</span><div class="sdots"><div class="sd ac"></div><div class="sd"></div><div class="sd"></div></div></div>
+        <div class="field fi"><span class="ico">📧</span><input type="email" id="l-email" placeholder="อีเมล (@cmu.ac.th)"></div>
+        <div class="field fi"><span class="ico">🔒</span><input type="password" id="l-pass" placeholder="Password"></div>
         <div class="err-msg" id="l-err">อีเมลหรือรหัสผ่านไม่ถูกต้อง</div>
-        <button class="btn-main b-purple" id="l-btn" onclick="doLogin()">Log In</button>
+        <span class="forgot" onclick="goStep('s-forgot')">Forgot Password?</span>
+        <button class="btn-main b-purple" id="l-btn" onclick="doLogin()">Log In Now</button>
+        <div class="divider">Login with Others</div>
+        <!-- Google Login → เปิดใน Chrome -->
+        <button class="btn-google" id="g-btn" onclick="doGoogleLogin()">
+          <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 8 2.9l5.7-5.7C34.5 6.9 29.5 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.9z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 19.1 12 24 12c3.1 0 5.8 1.1 8 2.9l5.7-5.7C34.5 6.9 29.5 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.1l-6.2-5.2C29.1 35.5 26.7 36 24 36c-5.2 0-9.7-3.3-11.3-8H5.9C9.3 36.9 16.1 44 24 44z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.3 5.7l6.2 5.2C41.1 36.1 44 30.5 44 24c0-1.3-.1-2.7-.4-3.9z"/></svg>
+          Login with Google
+          <span class="g-badge">เปิดใน Chrome</span>
+        </button>
+        <div class="auth-footer">ยังไม่มีบัญชี? <a onclick="goStep('s-email')">Create an account</a></div>
+      </div>
+
+      <!-- STEP: Forgot Password -->
+      <div class="step" id="s-forgot">
+        <div class="step-ind"><span class="step-txt">รีเซ็ตรหัสผ่าน</span></div>
+        <div style="text-align:center;margin-bottom:16px"><div style="font-size:13px;color:var(--gray-5)">กรอกอีเมลเพื่อรับลิงก์รีเซ็ตรหัสผ่าน</div></div>
+        <div class="field fi"><span class="ico">📧</span><input type="email" id="fp-email" placeholder="อีเมล (@cmu.ac.th)"></div>
+        <div class="err-msg" id="fp-err"></div>
+        <button class="btn-main b-blue" id="fp-btn" onclick="doForgotPassword()">ส่งลิงก์รีเซ็ต</button>
+        <div class="auth-footer"><a onclick="goStep('s-login')">← กลับเข้าสู่ระบบ</a></div>
+      </div>
+
+      <!-- STEP: Register Email -->
+      <div class="step" id="s-email">
+        <div class="step-ind"><span class="step-txt">สมัครสมาชิก 1/3</span><div class="sdots"><div class="sd ac"></div><div class="sd"></div><div class="sd"></div></div></div>
+        <div style="text-align:center;margin-bottom:16px"><div style="font-size:15px;font-weight:700;color:var(--navy)">Create an account</div><div style="font-size:12px;color:var(--gray-5);margin-top:3px">กรอกอีเมล CMU เพื่อรับลิงก์ยืนยัน</div></div>
+        <div class="field fi"><span class="ico">📧</span><input type="email" id="r-email" placeholder="อีเมล (@cmu.ac.th)"></div>
+        <div class="err-msg" id="r-err"></div>
+        <div style="text-align:center"><button class="btn-arrow" onclick="sendEmail()">→</button></div>
+        <div class="auth-footer"><a onclick="goStep('s-login')">← กลับเข้าสู่ระบบ</a></div>
+      </div>
+
+      <!-- STEP: Email Sent -->
+      <div class="step" id="s-sent">
+        <div class="step-ind"><span class="step-txt">ยืนยันอีเมล</span><div class="sdots"><div class="sd done"></div><div class="sd ac"></div><div class="sd"></div></div></div>
+        <div class="email-box">
+          <div class="ei">📧</div>
+          <h4>ส่งลิงก์ยืนยันแล้ว!</h4>
+          <p>ระบบส่งลิงก์ไปที่<br><span class="ehl" id="sent-to">—</span><br>กรุณาเปิดอีเมลและกดลิงก์ยืนยัน</p>
+        </div>
+        <div class="resend">ไม่ได้รับ? <span onclick="resendEmail()">ส่งอีกครั้ง</span></div>
+        <div class="auth-footer" style="margin-top:12px"><a onclick="goStep('s-email')">← แก้ไขอีเมล</a></div>
+      </div>
+
+      <!-- STEP: Set Password (หลังยืนยันอีเมล) -->
+      <div class="step" id="s-create">
+        <div class="step-ind"><span class="step-txt">สร้างบัญชี 3/3</span><div class="sdots"><div class="sd done"></div><div class="sd done"></div><div class="sd ac"></div></div></div>
+        <div style="text-align:center;margin-bottom:16px"><div style="font-size:15px;font-weight:700;color:var(--navy)">Create an account</div><div style="font-size:12px;color:var(--gray-5);margin-top:3px">ตั้งรหัสผ่านสำหรับบัญชีของคุณ</div></div>
+        <div class="field fi"><span class="ico">🔒</span><input type="password" id="c-pass" placeholder="Password (อย่างน้อย 6 ตัว)"></div>
+        <div class="field fi"><span class="ico">🔒</span><input type="password" id="c-conf" placeholder="Confirm Password"></div>
+        <div class="err-msg" id="c-err"></div>
+        <div style="text-align:center"><button class="btn-arrow" id="c-btn" onclick="doRegister()">→</button></div>
+      </div>
+
+      <!-- STEP: Success + Auto Login -->
+      <div class="step" id="s-success">
+        <div style="text-align:center;padding:10px 0">
+          <div style="font-size:48px;margin-bottom:12px">🎉</div>
+          <div style="font-size:17px;font-weight:700;color:var(--navy)">สมัครและเข้าสู่ระบบสำเร็จ!</div>
+          <div style="font-size:13px;color:var(--gray-5);margin-top:6px;line-height:1.6">กำลังพาไปหน้าแผนที่<br>เพื่อแจ้งปัญหา...</div>
+          <div style="margin-top:20px;display:flex;justify-content:center"><div class="spin" style="width:24px;height:24px;border-color:rgba(37,99,235,.3);border-top-color:var(--blue)"></div></div>
+        </div>
       </div>
 
     </div>
@@ -824,7 +882,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const fbAuth = firebase.auth();
 const fbStorage = firebase.storage();
-const MAP_PAGE = 'map.html?v=3.2';
+const MAP_PAGE = 'map.html?v=3.3';
 const GUIDE_PDF = 'manual.pdf';
 const FEEDBACK_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSft5glhL0K5yAbAeBuxfvvNEU1aPiJmPVblzNLmh7o6qZy8SA/viewform';
 
