@@ -63,6 +63,19 @@ try {
   console.error("Admin session restore error:", e);
 }
 
+// Dynamically track auth status in script.js
+auth.onAuthStateChanged(user => {
+  if (user && user.email === 'cmu-admin@cmu.ac.th') {
+    localStorage.setItem('cmu_current_user', JSON.stringify({ email: user.email, uid: user.uid }));
+    const adminViewMode = localStorage.getItem('cmu_admin_view') || 'admin';
+    isAdmin = adminViewMode === 'admin';
+  } else {
+    localStorage.removeItem('cmu_current_user');
+    isAdmin = false;
+  }
+  loadReports();
+});
+
 // 🧾 POPUP FORM (Left Side)
 const reportPopup = document.getElementById('reportPopup');
 const adminControls = document.getElementById('adminControls');
@@ -124,17 +137,36 @@ async function loadReports() {
       const r = doc.data();
       r.id = doc.id;
 
-      let markerColor = "red"; 
-      if (r.status === "เสร็จแล้ว") markerColor = "green";
-      else if (r.status === "กำลังดำเนินการ") markerColor = "orange";
+      // สีหมุดตามสถานะ (กำลังดำเนินการ, ส่งต่อ, เสร็จแล้ว คงเดิม)
+      // สีหมุดตามหมวดหมู่ (เฉพาะ รอรับเรื่อง)
+      const categoryColorMap = {
+        "🗑️ จุดทิ้งขยะ": "#6B7280",
+        "🅿️ ที่จอดรถ": "#2563EB",
+        "🚬 ที่สูบบุหรี่": "#1F2937",
+        "🛣️ ถนน": "#A855F7",
+        "🚶 ทางม้าลาย": "#EC4899",
+        "💻 Co-working Space": "#06B6D4",
+        "❓ อื่นๆ": "#F59E0B"
+      };
 
-      const customIcon = L.icon({
-        iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${markerColor}.png`,
-        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-        iconSize: [25, 41],       
-        iconAnchor: [12, 41],     
-        popupAnchor: [1, -34],    
-        shadowSize: [41, 41]      
+      let pinColor;
+      if (r.status === "เสร็จแล้ว") pinColor = "#16A34A";
+      else if (r.status === "กำลังดำเนินการ") pinColor = "#EA580C";
+      else if (r.status === "ส่งต่อ") pinColor = "#DC2626";
+      else pinColor = categoryColorMap[r.category] || "#DC2626";
+
+      const svgPin = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="42" viewBox="0 0 28 42">
+          <path d="M14 0 C6.27 0 0 6.27 0 14 C0 24.5 14 42 14 42 C14 42 28 24.5 28 14 C28 6.27 21.73 0 14 0 Z" fill="${pinColor}" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="14" cy="14" r="6" fill="#fff" opacity="0.9"/>
+        </svg>`;
+
+      const customIcon = L.divIcon({
+        html: svgPin,
+        className: '',
+        iconSize: [28, 42],
+        iconAnchor: [14, 42],
+        popupAnchor: [0, -36]
       });
 
       const marker = L.marker([r.lat, r.lng], { icon: customIcon });
@@ -266,6 +298,64 @@ function hideReportPopup() {
   }
 }
 
+// 🖼️ ฟังก์ชันบีบอัดรูปภาพฝั่ง Client ก่อนอัปโหลด
+// ช่วยลดขนาดรูปภาพจาก 3-10 MB ให้เหลือเพียง 100-200 KB ประหยัดพื้นที่จัดเก็บและช่วยให้ LocalStorage ในโหมดจำลองไม่เต็ม
+function compressImage(file, maxWidth = 1024, maxHeight = 1024, quality = 0.7) {
+  return new Promise((resolve, reject) => {
+    // ถ้ารูปไม่ใช่รูปภาพ ให้ข้ามการบีบอัด
+    if (!file.type.startsWith('image/')) {
+      return resolve(file);
+    }
+    
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target.result;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+
+        // คำนวณขนาดใหม่เพื่อคงสัดส่วนเดิม (Aspect Ratio)
+        if (width > height) {
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // แปลงผลลัพธ์บน canvas เป็น Blob ในรูปแบบ JPEG พร้อมระบุคุณภาพ (0.0 ถึง 1.0)
+        canvas.toBlob((blob) => {
+          if (blob) {
+            // ตั้งชื่อไฟล์ใหม่โดยแปลงนามสกุลเป็น .jpg
+            const compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/, "") + "_compressed.jpg", {
+              type: 'image/jpeg',
+              lastModified: Date.now()
+            });
+            resolve(compressedFile);
+          } else {
+            resolve(file); // หากเกิดข้อผิดพลาดในการแปลง ให้ใช้ไฟล์ต้นฉบับแทนเพื่อไม่ให้ระบบสะดุด
+          }
+        }, 'image/jpeg', quality);
+      };
+      img.onerror = () => resolve(file);
+    };
+    reader.onerror = () => resolve(file);
+  });
+}
+
 // 📤 SUBMIT (Firebase)
 document.getElementById('submitBtn').addEventListener('click', async () => {
   const title = document.getElementById('title').value;
@@ -286,18 +376,25 @@ document.getElementById('submitBtn').addEventListener('click', async () => {
   try {
     // อัปโหลดรูปภาพไปยัง Firebase Storage
     if (imageFile) {
-      const fileName = `images/${Date.now()}_${imageFile.name}`;
+      document.getElementById('submitBtn').innerText = "⏳ กำลังบีบอัดรูปภาพ...";
+      const compressedFile = await compressImage(imageFile, 1024, 1024, 0.7);
+      
+      document.getElementById('submitBtn').innerText = "⏳ กำลังอัปโหลดรูปภาพ...";
+      const fileName = `images/${Date.now()}_compressed.jpg`;
       const storageRef = storage.ref().child(fileName);
-      await storageRef.put(imageFile);
+      await storageRef.put(compressedFile);
+      
+      document.getElementById('submitBtn').innerText = "⏳ กำลังดึงลิงก์รูปภาพ...";
       uploadedImageUrl = await storageRef.getDownloadURL();
     }
 
     // บันทึกข้อมูลไปยัง Firestore
+    document.getElementById('submitBtn').innerText = "⏳ กำลังบันทึกข้อมูลรายงาน...";
     const activeUser = auth.currentUser;
     const userId = activeUser ? activeUser.uid : 'anonymous';
     const userEmail = activeUser ? activeUser.email : '';
 
-    await db.collection('reports').add({
+    const docRef = await db.collection('reports').add({
       title,
       detail,
       lat: selectedLat,
@@ -310,6 +407,17 @@ document.getElementById('submitBtn').addEventListener('click', async () => {
       created_at: firebase.firestore.FieldValue.serverTimestamp(),
       updated_at: firebase.firestore.FieldValue.serverTimestamp()
     });
+
+    // เซฟรหัสตั๋วลง Local Storage เพื่อจำประวัติบนเครื่องนี้
+    try {
+      const myTickets = JSON.parse(localStorage.getItem('my_reported_tickets') || '[]');
+      if (docRef && docRef.id && !myTickets.includes(docRef.id)) {
+        myTickets.push(docRef.id);
+        localStorage.setItem('my_reported_tickets', JSON.stringify(myTickets));
+      }
+    } catch (e) {
+      console.error("Local Storage save ticket error:", e);
+    }
 
     document.getElementById('submitBtn').innerText = "แจ้งปัญหา";
     document.getElementById('submitBtn').disabled = false;
@@ -324,7 +432,7 @@ document.getElementById('submitBtn').addEventListener('click', async () => {
     hideReportPopup();
     showToast("📌 แจ้งปัญหาสำเร็จ กำลังกลับสู่หน้าหลัก...");
     setTimeout(() => {
-      window.location.href = 'cmu-report-final9.html';
+      window.location.href = 'index.html';
     }, 1200);
   } catch (error) {
     console.error("Submit error:", error);
@@ -333,6 +441,96 @@ document.getElementById('submitBtn').addEventListener('click', async () => {
     alert("บันทึกไม่สำเร็จ สาเหตุ: " + error.message);
   }
 });
+
+// 📍 ฟังก์ชันสอนปลดบล็อกสิทธิ์ตำแหน่งอย่างสวยงาม
+function showGpsPermissionGuide(errorCode) {
+  const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  
+  let guideHtml = '';
+  let title = 'ไม่สามารถดึงตำแหน่ง GPS ได้';
+  let desc = 'คุณอาจปิดระบบพิกัด หรือปฏิเสธสิทธิ์การเข้าถึงตำแหน่งสำหรับหน้าจอนี้ในโทรศัพท์ของคุณ';
+  
+  if (errorCode === 1) {
+    title = '🔒 สิทธิ์การเข้าถึงพิกัดถูกบล็อก';
+    desc = 'เบราว์เซอร์ไม่ได้รับอนุญาตให้เข้าถึงพิกัด GPS กรุณาอนุญาตสิทธิ์การแชร์พิกัดเพื่อใช้งานการปักหมุดแจ้งปัญหาค่ะ/ครับ';
+    if (isIos) {
+      guideHtml = `
+        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; padding:15px; text-align:left; margin-bottom:20px; color:#334155; font-family:sans-serif;">
+          <h4 style="font-size:13px; font-weight:700; color:#1E2D5A; margin-top:0; margin-bottom:8px;">📱 วิธีอนุญาตสิทธิ์บน iPhone (Safari):</h4>
+          <ol style="font-size:12px; padding-left:18px; margin:0; line-height:1.7; color:#475569;">
+            <li>เปิดแอป <b>การตั้งค่า (Settings)</b> ของตัวเครื่อง</li>
+            <li>เลื่อนลงไปที่เมนู <b>Safari</b></li>
+            <li>เลือกหัวข้อ <b>ตำแหน่งที่ตั้ง (Location)</b> แล้วปรับสิทธิ์เป็น <b>"อนุญาต (Allow)"</b></li>
+          </ol>
+        </div>
+      `;
+    } else {
+      guideHtml = `
+        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; padding:15px; text-align:left; margin-bottom:20px; color:#334155; font-family:sans-serif;">
+          <h4 style="font-size:13px; font-weight:700; color:#1E2D5A; margin-top:0; margin-bottom:8px;">📱 วิธีอนุญาตสิทธิ์บน Android (Chrome):</h4>
+          <ol style="font-size:12px; padding-left:18px; margin:0; line-height:1.7; color:#475569;">
+            <li>กดไอคอน <b>แม่กุญแจ 🔒</b> ข้างแถบ URL ด้านบน</li>
+            <li>เลือกเมนู <b>"สิทธิ์การอนุญาต (Permissions)"</b></li>
+            <li>กดเปิดหัวข้อ <b>"ตำแหน่งที่ตั้ง (Location)"</b></li>
+          </ol>
+        </div>
+      `;
+    }
+  } else if (errorCode === 2) {
+    title = '📡 สัญญาณ GPS ไม่พร้อมใช้งาน';
+    desc = 'ไม่สามารถดึงพิกัดตำแหน่งจากระบบดาวเทียมหรือเครือข่ายได้ในขณะนี้';
+    guideHtml = `
+      <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; padding:15px; text-align:left; margin-bottom:20px; color:#334155; font-family:sans-serif;">
+        <h4 style="font-size:13px; font-weight:700; color:#1E2D5A; margin-top:0; margin-bottom:6px;">🛠️ ข้อแนะนำเพิ่มเติม:</h4>
+        <ul style="font-size:12px; padding-left:18px; margin:0; line-height:1.7; color:#475569;">
+          <li>เปิดใช้งาน <b>GPS (บริการระบุตำแหน่ง)</b> บนเครื่องมือถือของคุณ</li>
+          <li>เปิดใช้งาน <b>Wi-Fi</b> หรือขยับไปกลางแจ้งเพื่อให้รับสัญญาณดาวเทียมได้ง่ายขึ้น</li>
+        </ul>
+      </div>
+    `;
+  } else if (errorCode === 3) {
+    title = '⏳ ค้นหาตำแหน่งหมดเวลา';
+    desc = 'ระบบระบุตำแหน่ง GPS ใช้เวลานานเกินไปในการดึงพิกัดเนื่องจากสัญญาณอาจอ่อน';
+    guideHtml = `
+      <p style="font-size:12px; color:#64748b; line-height:1.6; margin-bottom:20px; text-align:center;">
+        กรุณาขยับไปจุดที่มีสัญญาณอินเทอร์เน็ตและสัญญาณพิกัดเสถียรขึ้น แล้วกดลองใหม่อีกครั้งค่ะ/ครับ
+      </p>
+    `;
+  }
+
+  let overlay = document.getElementById('gps-warning-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'gps-warning-overlay';
+    document.body.appendChild(overlay);
+  }
+  
+  Object.assign(overlay.style, {
+    position: 'fixed',
+    inset: '0',
+    background: 'rgba(15,23,42,0.85)',
+    backdropFilter: 'blur(10px)',
+    zIndex: '99999',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '20px',
+    fontFamily: "inherit"
+  });
+  
+  overlay.innerHTML = `
+    <div style="background:#fff; color:#1e293b; border-radius:24px; padding:30px 24px; width:100%; max-width:380px; box-shadow:0 20px 40px rgba(0,0,0,0.3); text-align:center; border:1px solid rgba(255,255,255,0.18); position:relative;">
+      <div style="font-size:50px; margin-bottom:15px;">📍</div>
+      <h3 style="font-size:18px; font-weight:700; color:#b91c1c; margin-bottom:10px;">${title}</h3>
+      <p style="font-size:13px; color:#64748b; line-height:1.6; margin-bottom:18px;">
+        ${desc}
+      </p>
+      ${guideHtml}
+      <button onclick="document.getElementById('gps-warning-overlay').style.display='none'" style="width:100%; padding:12px; background:#b91c1c; color:#fff; border:none; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer;">เข้าใจแล้ว</button>
+    </div>
+  `;
+  overlay.style.display = 'flex';
+}
 
 // 📍 ฟังก์ชันดึงพิกัด GPS ปัจจุบันของผู้ใช้
 function getUserLocation() {
@@ -367,15 +565,7 @@ function getUserLocation() {
     },
     (error) => {
       console.error("GPS Error:", error);
-      let errMsg = "ไม่สามารถเข้าถึงตำแหน่งได้";
-      if (error.code === 1) {
-        errMsg = "กรุณาเปิดสิทธิ์เข้าถึงตำแหน่ง (Location Access) ของเบราว์เซอร์นี้ใน 'การตั้งค่า (Settings)' ของ iPad/iPhone";
-      } else if (error.code === 2) {
-        errMsg = "สัญญาณระบุตำแหน่งไม่พร้อมใช้งาน กรุณาเปิดระบบหาตำแหน่ง (GPS) หรือ Wi-Fi ของเครื่อง";
-      } else if (error.code === 3) {
-        errMsg = "ระบบระบุตำแหน่งหมดเวลา (Timeout) กรุณาลองใหม่อีกครั้ง";
-      }
-      alert("❌ " + errMsg + " (Error Code: " + error.code + ")");
+      showGpsPermissionGuide(error.code);
       gpsButton.innerText = "📍 ใช้ตำแหน่งปัจจุบันของฉัน";
       gpsButton.disabled = false;
     },
@@ -472,15 +662,7 @@ function getUserLocationMobile() {
     },
     (error) => {
       console.error("GPS Error:", error);
-      let errMsg = "ไม่สามารถเข้าถึงตำแหน่งได้";
-      if (error.code === 1) {
-        errMsg = "กรุณาเปิดสิทธิ์เข้าถึงตำแหน่ง (Location Access) ของเบราว์เซอร์นี้ใน 'การตั้งค่า (Settings)' ของ iPad/iPhone";
-      } else if (error.code === 2) {
-        errMsg = "สัญญาณระบุตำแหน่งไม่พร้อมใช้งาน กรุณาเปิดระบบหาตำแหน่ง (GPS) หรือ Wi-Fi ของเครื่อง";
-      } else if (error.code === 3) {
-        errMsg = "ระบบระบุตำแหน่งหมดเวลา (Timeout) กรุณาลองใหม่อีกครั้ง";
-      }
-      alert("❌ " + errMsg + " (Error Code: " + error.code + ")");
+      showGpsPermissionGuide(error.code);
       mobileGpsBtn.innerHTML = originalHtml;
       mobileGpsBtn.disabled = false;
     },
