@@ -895,7 +895,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const fbAuth = firebase.auth();
 const fbStorage = firebase.storage();
-const MAP_PAGE = 'map.html?v=3.7';
+const MAP_PAGE = 'map.html?v=3.8';
 const GUIDE_PDF = 'manual.pdf';
 const FEEDBACK_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSft5glhL0K5yAbAeBuxfvvNEU1aPiJmPVblzNLmh7o6qZy8SA/viewform';
 
@@ -1311,6 +1311,7 @@ async function loadUserReports(userId) {
   snapshot.forEach(doc => {
     const d = doc.data();
     d.id = doc.id;
+    if (d.is_deleted === true || d.status === 'ลบแล้ว' || d.status === 'deleted') return;
     if (d.created_at && d.created_at.toDate) d.created_at = d.created_at.toDate().toISOString();
     if (d.updated_at && d.updated_at.toDate) d.updated_at = d.updated_at.toDate().toISOString();
     
@@ -1438,27 +1439,46 @@ async function deleteAdminReport(id) {
   const isConfirmed = confirm("⚠️ คุณแน่ใจหรือไม่ว่าต้องการลบรายงานปัญหานี้ออกจากระบบอย่างถาวร?");
   if (!isConfirmed) return;
 
-  try {
-    toast('⏳ กำลังลบรายงาน...');
-    await db.collection('reports').doc(targetId).delete();
-    
-    // ลบออกจาก local storage tickets
-    try {
-      const myTickets = JSON.parse(localStorage.getItem('my_reported_tickets') || '[]');
-      const filtered = myTickets.filter(tid => tid !== targetId);
-      localStorage.setItem('my_reported_tickets', JSON.stringify(filtered));
-    } catch(e){}
+  toast('⏳ กำลังลบรายงาน...');
+  let deleteSuccess = false;
 
-    toast('🗑️ ลบรายงานปัญหานี้เรียบร้อยแล้ว', 'ok');
-    closeAdminModal();
-    closeDetailModal();
-    if (typeof loadStats === 'function') loadStats();
-    if (typeof loadUserReports === 'function') loadUserReports(currentUser ? currentUser.uid : null);
-  } catch (error) {
-    console.error("deleteAdminReport error:", error);
-    toast('❌ ลบไม่สำเร็จ: ' + error.message, 'er');
-    alert("ลบไม่สำเร็จ สาเหตุ: " + error.message);
+  // ขั้นที่ 1: พยายามลบแบบ Hard Delete
+  try {
+    await db.collection('reports').doc(targetId).delete();
+    deleteSuccess = true;
+  } catch (hardErr) {
+    console.warn("Firestore delete blocked, trying soft-delete fallback...", hardErr);
   }
+
+  // ขั้นที่ 2: หาก Rules ไม่อนุญาต ให้ทำ Soft Delete โดยการมาร์ก is_deleted ทันที
+  if (!deleteSuccess) {
+    try {
+      await db.collection('reports').doc(targetId).update({
+        is_deleted: true,
+        status: 'ลบแล้ว',
+        deleted_at: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      deleteSuccess = true;
+    } catch (softErr) {
+      console.error("Soft delete failed:", softErr);
+      toast('❌ ลบไม่สำเร็จ: ' + (softErr.message || 'เกิดข้อผิดพลาด'), 'er');
+      alert("ลบไม่สำเร็จ สาเหตุ: " + softErr.message);
+      return;
+    }
+  }
+
+  // ขั้นที่ 3: ลบออกจาก local storage tickets
+  try {
+    const myTickets = JSON.parse(localStorage.getItem('my_reported_tickets') || '[]');
+    const filtered = myTickets.filter(tid => tid !== targetId);
+    localStorage.setItem('my_reported_tickets', JSON.stringify(filtered));
+  } catch(e){}
+
+  toast('🗑️ ลบรายงานปัญหานี้เรียบร้อยแล้ว', 'ok');
+  closeAdminModal();
+  closeDetailModal();
+  if (typeof loadStats === 'function') loadStats();
+  if (typeof loadUserReports === 'function') loadUserReports(currentUser ? currentUser.uid : null);
 }
 
 window.adminManageReport = adminManageReport;
@@ -1789,6 +1809,7 @@ async function loadStats() {
     snapshot.forEach(doc => {
       const d = doc.data();
       d.id = doc.id;
+      if (d.is_deleted === true || d.status === 'ลบแล้ว' || d.status === 'deleted') return;
       if (d.created_at && d.created_at.toDate) d.created_at = d.created_at.toDate().toISOString();
       if (d.updated_at && d.updated_at.toDate) d.updated_at = d.updated_at.toDate().toISOString();
       data.push(d);

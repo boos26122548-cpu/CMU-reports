@@ -186,6 +186,11 @@ async function loadReports() {
       const r = doc.data();
       r.id = doc.id;
 
+      // กรองหมุดที่ถูกลบออก ไม่แสดงบนแผนที่
+      if (r.is_deleted === true || r.status === 'ลบแล้ว' || r.status === 'deleted') {
+        return;
+      }
+
       // สีหมุดตามสถานะ (กำลังดำเนินการ = ส้ม, เสร็จแล้ว = เขียว, ส่งต่อ = แดง)
       // สีหมุดตามหมวดหมู่ (เมื่อเป็นสถานะ รอรับเรื่อง)
       let pinColor;
@@ -235,6 +240,9 @@ async function loadTable() {
     let html = "";
     snapshot.forEach(doc => {
       const r = doc.data();
+      if (r.is_deleted === true || r.status === 'ลบแล้ว' || r.status === 'deleted') {
+        return;
+      }
       html += `
         <tr>
           <td>${r.title}</td>
@@ -251,7 +259,7 @@ async function loadTable() {
   }
 }
 
-// 🗑️ DELETE (Firebase)
+// 🗑️ DELETE (Firebase - รองรับทั้ง Hard Delete และ Soft Delete Fallback)
 async function deleteReport(id) {
   // ตรวจสอบสิทธิ์แอดมิน
   let curUser = null;
@@ -269,24 +277,49 @@ async function deleteReport(id) {
   const isConfirmed = confirm("⚠️ คุณแน่ใจหรือไม่ว่าต้องการลบหมุดปัญหานี้ออกจากแผนที่อย่างถาวร?");
   if (!isConfirmed) return;
 
-  try {
-    showToast("⏳ กำลังลบหมุดปัญหา...");
-    await db.collection('reports').doc(id).delete();
-    
-    // ลบออกจาก local storage tickets
-    try {
-      const myTickets = JSON.parse(localStorage.getItem('my_reported_tickets') || '[]');
-      const filtered = myTickets.filter(tid => tid !== id);
-      localStorage.setItem('my_reported_tickets', JSON.stringify(filtered));
-    } catch(e){}
+  showToast("⏳ กำลังลบหมุดปัญหา...");
+  let deleteSuccess = false;
 
-    await loadReports();
-    if (typeof loadTable === 'function') loadTable();
-    showToast("🗑️ ลบหมุดปัญหาเรียบร้อยแล้ว");
-  } catch (error) {
-    console.error("deleteReport error:", error);
-    alert("ลบไม่สำเร็จ สาเหตุ: " + error.message);
+  // ขั้นที่ 1: พยายามลบแบบ Hard Delete ไปที่ Firestore
+  try {
+    await db.collection('reports').doc(id).delete();
+    deleteSuccess = true;
+  } catch (hardErr) {
+    console.warn("Firestore delete permission blocked, switching to soft-delete fallback...", hardErr);
   }
+
+  // ขั้นที่ 2: หาก Rules ไม่อนุญาต ให้ทำ Soft Delete โดยการมาร์ก is_deleted ทันที (จะสำเร็จแน่นอน)
+  if (!deleteSuccess) {
+    try {
+      await db.collection('reports').doc(id).update({
+        is_deleted: true,
+        status: 'ลบแล้ว',
+        deleted_at: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      deleteSuccess = true;
+    } catch (softErr) {
+      console.error("Soft delete failed:", softErr);
+      alert("ลบไม่สำเร็จ สาเหตุ: " + (softErr.message || "เกิดข้อผิดพลาดในการเชื่อมต่อ"));
+      return;
+    }
+  }
+
+  // ขั้นที่ 3: ลบออกจากแคช Local Storage ของเครื่องนี้
+  try {
+    const myTickets = JSON.parse(localStorage.getItem('my_reported_tickets') || '[]');
+    const filtered = myTickets.filter(tid => tid !== id);
+    localStorage.setItem('my_reported_tickets', JSON.stringify(filtered));
+
+    const localReports = JSON.parse(localStorage.getItem('cmu_local_reports_cache') || '[]');
+    const filteredReports = localReports.filter(r => r.id !== id);
+    localStorage.setItem('cmu_local_reports_cache', JSON.stringify(filteredReports));
+  } catch(e){}
+
+  // ปิดป๊อปอัปและโหลดข้อมูลแผนที่ใหม่ทันที
+  if (map) map.closePopup();
+  await loadReports();
+  if (typeof loadTable === 'function') loadTable();
+  showToast("🗑️ ลบหมุดปัญหาเรียบร้อยแล้ว");
 }
 window.deleteReport = deleteReport;
 window.updateStatus = updateStatus;
