@@ -698,9 +698,12 @@ body{font-family:'IBM Plex Sans Thai',sans-serif;background:#F0F4F8;color:var(--
     <label style="font-size:12px; font-weight:600; color:var(--gray-5); display:block; margin-bottom:6px;">💬 ข้อความตอบกลับจากแอดมิน:</label>
     <textarea id="adm-reply-text" placeholder="ระบุการชี้แจงการแก้ไขปัญหาที่นี่..." style="width:100%; height:80px; padding:10px; border-radius:8px; border:1px solid var(--gray-3); font-size:13px; font-family:inherit; margin-bottom:18px; resize:none; outline:none;"></textarea>
     
-    <div style="display:flex; justify-content:flex-end; gap:8px;">
-      <button onclick="closeAdminModal()" style="padding:8px 16px; border-radius:8px; border:none; background:var(--gray-2); color:var(--gray-5); font-size:13px; font-weight:600; cursor:pointer; font-family:inherit;">ยกเลิก</button>
-      <button id="adm-save-btn" onclick="saveAdminManage()" style="padding:8px 18px; border-radius:8px; border:none; background:var(--navy); color:#fff; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit;">บันทึกข้อมูล</button>
+    <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+      <button type="button" onclick="deleteAdminReport()" style="padding:8px 14px; border-radius:8px; border:none; background:#FEE2E2; color:#DC2626; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; display:flex; align-items:center; gap:4px; transition:all 0.18s;">🗑️ ลบรายงานนี้</button>
+      <div style="display:flex; gap:8px;">
+        <button onclick="closeAdminModal()" style="padding:8px 16px; border-radius:8px; border:none; background:var(--gray-2); color:var(--gray-5); font-size:13px; font-weight:600; cursor:pointer; font-family:inherit;">ยกเลิก</button>
+        <button id="adm-save-btn" onclick="saveAdminManage()" style="padding:8px 18px; border-radius:8px; border:none; background:var(--navy); color:#fff; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit;">บันทึกข้อมูล</button>
+      </div>
     </div>
   </div>
 </div>
@@ -776,6 +779,16 @@ body{font-family:'IBM Plex Sans Thai',sans-serif;background:#F0F4F8;color:var(--
           <div style="font-weight:700; margin-bottom:4px; font-size:13px;" id="dtm-saved-stars">⭐⭐⭐⭐⭐ (5/5)</div>
           <div id="dtm-saved-comment" style="font-style:italic;">"แก้ไขได้รวดเร็วดีเยี่ยม"</div>
         </div>
+      </div>
+
+      <!-- แถบปุ่มจัดการสำหรับแอดมินในหน้ารายละเอียด -->
+      <div id="dtm-admin-actions" style="border-top:1.5px dashed var(--gray-3); padding-top:16px; margin-top:16px; display:none; justify-content:space-between; align-items:center;">
+        <button onclick="deleteAdminReport(window.activeDetailReportId)" style="padding:8px 14px; border-radius:8px; border:none; background:#FEE2E2; color:#DC2626; font-size:12.5px; font-weight:700; cursor:pointer; font-family:inherit; display:flex; align-items:center; gap:4px; transition:all 0.18s;">
+          🗑️ ลบรายงานนี้
+        </button>
+        <button onclick="closeDetailModal(); adminManageReport(window.activeDetailReportId);" style="padding:8px 16px; border-radius:8px; border:none; background:var(--navy); color:#fff; font-size:12.5px; font-weight:600; cursor:pointer; font-family:inherit; display:flex; align-items:center; gap:6px;">
+          🛠️ เปลี่ยนสถานะ / ตอบกลับ
+        </button>
       </div>
 
     </div>
@@ -882,7 +895,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const fbAuth = firebase.auth();
 const fbStorage = firebase.storage();
-const MAP_PAGE = 'map.html?v=3.6';
+const MAP_PAGE = 'map.html?v=3.7';
 const GUIDE_PDF = 'manual.pdf';
 const FEEDBACK_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSft5glhL0K5yAbAeBuxfvvNEU1aPiJmPVblzNLmh7o6qZy8SA/viewform';
 
@@ -1252,7 +1265,10 @@ function renderPanelReportsOnly() {
     : displayReports.map(r => {
         const sc = r.status==='เสร็จแล้ว'?'s-done':r.status==='กำลังดำเนินการ'?'s-active':r.status==='ส่งต่อ'?'s-fwd':'s-pending';
         const adminBtn = showAsAdmin
-          ? `<button onclick="event.stopPropagation(); adminManageReport('${r.id}')" style="margin-top:8px;padding:5px 10px;border-radius:6px;border:none;background:var(--navy);color:#fff;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:4px;transition:all 0.18s;box-shadow:var(--shadow)">🛠️ เปลี่ยนสถานะ / ตอบกลับ</button>`
+          ? `<div style="display:flex;gap:6px;margin-top:8px;">
+               <button onclick="event.stopPropagation(); adminManageReport('${r.id}')" style="padding:5px 10px;border-radius:6px;border:none;background:var(--navy);color:#fff;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:4px;box-shadow:var(--shadow)">🛠️ เปลี่ยนสถานะ / ตอบกลับ</button>
+               <button onclick="event.stopPropagation(); deleteAdminReport('${r.id}')" style="padding:5px 10px;border-radius:6px;border:none;background:#FEE2E2;color:#DC2626;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:4px;">🗑️ ลบ</button>
+             </div>`
           : '';
           
         return `<div class="ri" onclick="showReportDetail('${r.id}')" style="cursor:pointer">
@@ -1415,9 +1431,40 @@ async function saveAdminManage() {
   }
 }
 
+async function deleteAdminReport(id) {
+  const targetId = id || currentManagingId;
+  if (!targetId) return;
+
+  const isConfirmed = confirm("⚠️ คุณแน่ใจหรือไม่ว่าต้องการลบรายงานปัญหานี้ออกจากระบบอย่างถาวร?");
+  if (!isConfirmed) return;
+
+  try {
+    toast('⏳ กำลังลบรายงาน...');
+    await db.collection('reports').doc(targetId).delete();
+    
+    // ลบออกจาก local storage tickets
+    try {
+      const myTickets = JSON.parse(localStorage.getItem('my_reported_tickets') || '[]');
+      const filtered = myTickets.filter(tid => tid !== targetId);
+      localStorage.setItem('my_reported_tickets', JSON.stringify(filtered));
+    } catch(e){}
+
+    toast('🗑️ ลบรายงานปัญหานี้เรียบร้อยแล้ว', 'ok');
+    closeAdminModal();
+    closeDetailModal();
+    if (typeof loadStats === 'function') loadStats();
+    if (typeof loadUserReports === 'function') loadUserReports(currentUser ? currentUser.uid : null);
+  } catch (error) {
+    console.error("deleteAdminReport error:", error);
+    toast('❌ ลบไม่สำเร็จ: ' + error.message, 'er');
+    alert("ลบไม่สำเร็จ สาเหตุ: " + error.message);
+  }
+}
+
 window.adminManageReport = adminManageReport;
 window.closeAdminModal = closeAdminModal;
 window.saveAdminManage = saveAdminManage;
+window.deleteAdminReport = deleteAdminReport;
 
 // ========== SHOW REPORT DETAIL MODAL ==========
 function showReportDetail(id) {
@@ -1497,6 +1544,13 @@ function showReportDetail(id) {
   
   // Track active detail report ID for rating submission
   window.activeDetailReportId = id;
+  
+  // แสดงปุ่มจัดการและลบสำหรับแอดมินในหน้ารายละเอียด
+  const adminActionsBox = document.getElementById('dtm-admin-actions');
+  if (adminActionsBox) {
+    const showAsAdmin = currentUser && currentUser.email === 'cmu-admin@cmu.ac.th' && isAdminView;
+    adminActionsBox.style.display = showAsAdmin ? 'flex' : 'none';
+  }
 
   // จัดการการแสดงผลกล่องประเมินความพึงพอใจ
   const ratingBox = document.getElementById('dtm-rating-box');

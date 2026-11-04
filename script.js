@@ -202,8 +202,10 @@ async function loadReports() {
 
       let btn = isAdmin ? `
         <hr>
-        <button onclick="updateStatus('${r.id}')">🛠️ เปลี่ยนสถานะ</button>
-        <button onclick="deleteReport('${r.id}')">🗑️ ลบ</button>
+        <div style="display:flex; gap:6px; margin-top:8px;">
+          <button onclick="updateStatus('${r.id}')" style="padding:6px 10px; background:#1E2D5A; color:#fff; border:none; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer;">🛠️ เปลี่ยนสถานะ</button>
+          <button onclick="deleteReport('${r.id}')" style="padding:6px 10px; background:#DC2626; color:#fff; border:none; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer;">🗑️ ลบหมุด</button>
+        </div>
       ` : "";
 
       marker.bindPopup(`
@@ -251,16 +253,43 @@ async function loadTable() {
 
 // 🗑️ DELETE (Firebase)
 async function deleteReport(id) {
-  if (!isAdmin) return alert("admin เท่านั้น");
+  // ตรวจสอบสิทธิ์แอดมิน
+  let curUser = null;
   try {
+    const raw = localStorage.getItem('cmu_current_user');
+    if (raw) curUser = JSON.parse(raw);
+  } catch(e) {}
+  
+  const checkAdmin = isAdmin || (curUser && curUser.email === 'cmu-admin@cmu.ac.th');
+  if (!checkAdmin) {
+    alert("เฉพาะแอดมินเท่านั้นที่สามารถลบข้อมูลรายงานนี้ได้");
+    return;
+  }
+
+  const isConfirmed = confirm("⚠️ คุณแน่ใจหรือไม่ว่าต้องการลบหมุดปัญหานี้ออกจากแผนที่อย่างถาวร?");
+  if (!isConfirmed) return;
+
+  try {
+    showToast("⏳ กำลังลบหมุดปัญหา...");
     await db.collection('reports').doc(id).delete();
-    loadReports();
-    loadTable();
-    showToast("🗑️ ลบแล้ว");
+    
+    // ลบออกจาก local storage tickets
+    try {
+      const myTickets = JSON.parse(localStorage.getItem('my_reported_tickets') || '[]');
+      const filtered = myTickets.filter(tid => tid !== id);
+      localStorage.setItem('my_reported_tickets', JSON.stringify(filtered));
+    } catch(e){}
+
+    await loadReports();
+    if (typeof loadTable === 'function') loadTable();
+    showToast("🗑️ ลบหมุดปัญหาเรียบร้อยแล้ว");
   } catch (error) {
     console.error("deleteReport error:", error);
+    alert("ลบไม่สำเร็จ สาเหตุ: " + error.message);
   }
 }
+window.deleteReport = deleteReport;
+window.updateStatus = updateStatus;
 
 // ✏️ EDIT (Firebase)
 async function editReport(id) {
