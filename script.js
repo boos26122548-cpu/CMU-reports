@@ -186,10 +186,8 @@ async function loadReports() {
       const r = doc.data();
       r.id = doc.id;
 
-      // กรองหมุดที่ถูกลบออก ไม่แสดงบนแผนที่
-      let localDeleted = [];
-      try { localDeleted = JSON.parse(localStorage.getItem('cmu_deleted_reports') || '[]'); } catch(e){}
-      if (r.rating_comment === '__DELETED__' || r.rating === -999 || r.is_deleted === true || r.status === 'ลบแล้ว' || r.status === 'deleted' || localDeleted.includes(r.id)) {
+      // แสดงหมุดทั้งหมดตามปกติ
+      if (r.is_deleted === true || r.status === 'ลบแล้ว') {
         return;
       }
 
@@ -242,9 +240,7 @@ async function loadTable() {
     let html = "";
     snapshot.forEach(doc => {
       const r = doc.data();
-      let localDeletedTable = [];
-      try { localDeletedTable = JSON.parse(localStorage.getItem('cmu_deleted_reports') || '[]'); } catch(e){}
-      if (r.rating_comment === '__DELETED__' || r.rating === -999 || r.is_deleted === true || r.status === 'ลบแล้ว' || r.status === 'deleted' || localDeletedTable.includes(doc.id)) {
+      if (r.is_deleted === true || r.status === 'ลบแล้ว') {
         return;
       }
       html += `
@@ -263,9 +259,8 @@ async function loadTable() {
   }
 }
 
-// 🗑️ DELETE (Firebase - ใช้งานได้ 100% ไม่ติดสิทธิ์ Permissions)
+// 🗑️ DELETE (Firebase)
 async function deleteReport(id) {
-  // ตรวจสอบสิทธิ์แอดมิน
   let curUser = null;
   try {
     const raw = localStorage.getItem('cmu_current_user');
@@ -283,37 +278,28 @@ async function deleteReport(id) {
 
   showToast("⏳ กำลังลบหมุดปัญหา...");
 
-  // 1. บันทึก ID ลงในแคชรายการที่ถูกลบของเครื่องนี้ทันที (ทำให้หมุดหายไปทันทีโดยไม่ต้องรอ)
   try {
-    const deletedCache = JSON.parse(localStorage.getItem('cmu_deleted_reports') || '[]');
-    if (!deletedCache.includes(id)) {
-      deletedCache.push(id);
-      localStorage.setItem('cmu_deleted_reports', JSON.stringify(deletedCache));
-    }
-    const myTickets = JSON.parse(localStorage.getItem('my_reported_tickets') || '[]');
-    const filtered = myTickets.filter(tid => tid !== id);
-    localStorage.setItem('my_reported_tickets', JSON.stringify(filtered));
+    await db.collection('reports').doc(id).delete();
+    
+    // ลบออกจากแคชตั๋วในเครื่อง
+    try {
+      const myTickets = JSON.parse(localStorage.getItem('my_reported_tickets') || '[]');
+      const filtered = myTickets.filter(tid => tid !== id);
+      localStorage.setItem('my_reported_tickets', JSON.stringify(filtered));
+    } catch(e){}
 
-    const localReports = JSON.parse(localStorage.getItem('cmu_local_reports_cache') || '[]');
-    const filteredReports = localReports.filter(r => r.id !== id);
-    localStorage.setItem('cmu_local_reports_cache', JSON.stringify(filteredReports));
-  } catch(e){}
-
-  // 2. ซิงค์สถานะการลบขึ้น Firestore (ใช้ฟิลด์ rating_comment ตามสิทธิ์ Firestore Security Rules ที่อนุญาต 200 OK)
-  try {
-    await db.collection('reports').doc(id).update({
-      rating: -999,
-      rating_comment: '__DELETED__'
-    });
+    if (map) map.closePopup();
+    await loadReports();
+    if (typeof loadTable === 'function') loadTable();
+    showToast("🗑️ ลบหมุดปัญหาเรียบร้อยแล้ว");
   } catch (err) {
-    console.warn("Firestore update:", err);
+    console.error("Delete error:", err);
+    if (err.message && (err.message.includes("permission") || err.code === "permission-denied")) {
+      alert("⚠️ ลบไม่สำเร็จเนื่องจาก Firebase Security Rules ไม่อนุญาตการลบ (allow delete: if false)");
+    } else {
+      alert("ลบไม่สำเร็จ สาเหตุ: " + err.message);
+    }
   }
-
-  // 3. ปิดป๊อปอัปและโหลดหมุดใหม่ทันที
-  if (map) map.closePopup();
-  await loadReports();
-  if (typeof loadTable === 'function') loadTable();
-  showToast("🗑️ ลบหมุดปัญหาเรียบร้อยแล้ว");
 }
 window.deleteReport = deleteReport;
 window.updateStatus = updateStatus;
@@ -728,6 +714,7 @@ function logout() {
 }
 
 // 🚀 START
+try { localStorage.removeItem('cmu_deleted_reports'); } catch(e){}
 loadReports();
 showReportPopup();
 updateMapAuthBtn();

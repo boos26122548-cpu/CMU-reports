@@ -1308,13 +1308,10 @@ async function loadUserReports(userId) {
   if (!snapshot) return;
 
   const reports = [];
-  let localDeleted = [];
-  try { localDeleted = JSON.parse(localStorage.getItem('cmu_deleted_reports') || '[]'); } catch(e){}
-
   snapshot.forEach(doc => {
     const d = doc.data();
     d.id = doc.id;
-    if (d.rating_comment === '__DELETED__' || d.rating === -999 || d.is_deleted === true || d.status === 'ลบแล้ว' || d.status === 'deleted' || localDeleted.includes(d.id)) return;
+    if (d.is_deleted === true || d.status === 'ลบแล้ว') return;
     if (d.created_at && d.created_at.toDate) d.created_at = d.created_at.toDate().toISOString();
     if (d.updated_at && d.updated_at.toDate) d.updated_at = d.updated_at.toDate().toISOString();
     
@@ -1444,35 +1441,29 @@ async function deleteAdminReport(id) {
 
   toast('⏳ กำลังลบรายงาน...');
 
-  // 1. บันทึกลงในแคชรายการที่ถูกลบของเครื่องนี้ทันที
   try {
-    const deletedCache = JSON.parse(localStorage.getItem('cmu_deleted_reports') || '[]');
-    if (!deletedCache.includes(targetId)) {
-      deletedCache.push(targetId);
-      localStorage.setItem('cmu_deleted_reports', JSON.stringify(deletedCache));
-    }
-    const myTickets = JSON.parse(localStorage.getItem('my_reported_tickets') || '[]');
-    const filtered = myTickets.filter(tid => tid !== targetId);
-    localStorage.setItem('my_reported_tickets', JSON.stringify(filtered));
-  } catch(e){}
+    await db.collection('reports').doc(targetId).delete();
+    
+    try {
+      const myTickets = JSON.parse(localStorage.getItem('my_reported_tickets') || '[]');
+      const filtered = myTickets.filter(tid => tid !== targetId);
+      localStorage.setItem('my_reported_tickets', JSON.stringify(filtered));
+    } catch(e){}
 
-  // 2. ซิงค์สถานะการลบขึ้น Firestore (ผ่านฟิลด์ rating_comment ที่ได้รับอนุญาต 100%)
-  try {
-    await db.collection('reports').doc(targetId).update({
-      rating: -999,
-      rating_comment: '__DELETED__'
-    });
+    toast('🗑️ ลบรายงานปัญหานี้เรียบร้อยแล้ว', 'ok');
+    closeAdminModal();
+    closeDetailModal();
+    if (typeof loadStats === 'function') loadStats();
+    if (typeof loadUserReports === 'function') loadUserReports(currentUser ? currentUser.uid : null);
   } catch (err) {
-    console.warn("Firestore update:", err);
+    console.error("deleteAdminReport error:", err);
+    if (err.message && (err.message.includes("permission") || err.code === "permission-denied")) {
+      alert("⚠️ ลบไม่สำเร็จเนื่องจาก Firebase Security Rules ไม่อนุญาตการลบ (allow delete: if false)");
+    } else {
+      alert("ลบไม่สำเร็จ สาเหตุ: " + err.message);
+    }
   }
-
-  toast('🗑️ ลบรายงานปัญหานี้เรียบร้อยแล้ว', 'ok');
-  closeAdminModal();
-  closeDetailModal();
-  if (typeof loadStats === 'function') loadStats();
-  if (typeof loadUserReports === 'function') loadUserReports(currentUser ? currentUser.uid : null);
 }
-
 window.deleteAdminReport = deleteAdminReport;
 
 // ========== SHOW REPORT DETAIL MODAL ==========
@@ -1795,13 +1786,10 @@ async function loadStats() {
   try {
     const snapshot = await db.collection('reports').orderBy('created_at', 'desc').get();
     const data = [];
-    let localDeletedStats = [];
-    try { localDeletedStats = JSON.parse(localStorage.getItem('cmu_deleted_reports') || '[]'); } catch(e){}
-
     snapshot.forEach(doc => {
       const d = doc.data();
       d.id = doc.id;
-      if (d.rating_comment === '__DELETED__' || d.rating === -999 || d.is_deleted === true || d.status === 'ลบแล้ว' || d.status === 'deleted' || localDeletedStats.includes(d.id)) return;
+      if (d.is_deleted === true || d.status === 'ลบแล้ว') return;
       if (d.created_at && d.created_at.toDate) d.created_at = d.created_at.toDate().toISOString();
       if (d.updated_at && d.updated_at.toDate) d.updated_at = d.updated_at.toDate().toISOString();
       data.push(d);
