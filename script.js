@@ -112,12 +112,18 @@ function updateMapAuthBtn() {
 
 // Dynamically track auth status in script.js
 auth.onAuthStateChanged(user => {
-  if (user && user.email === 'cmu-admin@cmu.ac.th') {
-    localStorage.setItem('cmu_current_user', JSON.stringify({ email: user.email, uid: user.uid }));
+  let storedAdmin = null;
+  try {
+    const raw = localStorage.getItem('cmu_current_user');
+    if (raw) storedAdmin = JSON.parse(raw);
+  } catch(e) {}
+
+  if ((user && user.email === 'cmu-admin@cmu.ac.th') || (storedAdmin && storedAdmin.email === 'cmu-admin@cmu.ac.th')) {
     const adminViewMode = localStorage.getItem('cmu_admin_view') || 'admin';
     isAdmin = adminViewMode === 'admin';
-  } else {
-    localStorage.removeItem('cmu_current_user');
+  } else if (user) {
+    isAdmin = false;
+  } else if (!storedAdmin) {
     isAdmin = false;
   }
   updateMapAuthBtn();
@@ -290,12 +296,14 @@ async function updateStatus(id) {
   }
 }
 
-// 🔄 REALTIME (Firebase onSnapshot)
+// 🔄 REALTIME (Firebase onSnapshot) - อัปเดตหมุดปัญหาบนแผนที่ให้ทุกคนแบบเรียลไทม์
 db.collection('reports').onSnapshot(() => {
+  loadReports();
   if (isAdmin) {
-    loadReports();
     loadTable();
   }
+}, (err) => {
+  console.warn("Realtime snapshot error, falling back to loadReports():", err);
 });
 
 // 🧾 ฟังก์ชันแสดง Popup Form
@@ -552,7 +560,7 @@ function showGpsPermissionGuide(errorCode) {
   overlay.style.display = 'flex';
 }
 
-// 📍 ฟังก์ชันดึงพิกัด GPS ปัจจุบันของผู้ใช้
+// 📍 ฟังก์ชันดึงพิกัด GPS ปัจจุบันของผู้ใช้ (ความแม่นยำสูงตรงจุดที่ยืน)
 function getUserLocation() {
   const gpsButton = document.getElementById('gpsBtn');
   
@@ -561,38 +569,56 @@ function getUserLocation() {
     return;
   }
 
-  gpsButton.innerText = "⏳ กำลังค้นหาตำแหน่ง...";
-  gpsButton.disabled = true;
+  const originalText = "📍 ปักหมุดตรงที่ฉันยืน (ใช้ GPS)";
+  if (gpsButton) {
+    gpsButton.innerText = "🛰️ กำลังจับพิกัด GPS ตรงจุดที่ยืน...";
+    gpsButton.disabled = true;
+  }
 
+  const setGpsLocation = (position) => {
+    selectedLat = position.coords.latitude;
+    selectedLng = position.coords.longitude;
+    const accuracy = Math.round(position.coords.accuracy || 0);
+
+    if (tempMarker) map.removeLayer(tempMarker);
+
+    tempMarker = L.marker([selectedLat, selectedLng], {
+      draggable: true,
+      icon: getPinIcon(getSelectedCategoryColor())
+    }).addTo(map);
+
+    map.setView([selectedLat, selectedLng], 18); 
+
+    if (gpsButton) {
+      gpsButton.innerText = originalText;
+      gpsButton.disabled = false;
+    }
+    showReportPopup();
+    showToast(✅ ปักหมุดตรงจุดที่คุณยืนแล้ว (ความแม่นยำ ± ม.));
+  };
+
+  // ดึงพิกัด GPS ความแม่นยำสูง (เปิดชิปฮาร์ดแวร์ GPS)
   navigator.geolocation.getCurrentPosition(
-    (position) => {
-      selectedLat = position.coords.latitude;
-      selectedLng = position.coords.longitude;
-
-      if (tempMarker) map.removeLayer(tempMarker);
-
-      tempMarker = L.marker([selectedLat, selectedLng], {
-        draggable: true,
-        icon: getPinIcon(getSelectedCategoryColor())
-      }).addTo(map);
-
-      map.setView([selectedLat, selectedLng], 17); 
-
-      gpsButton.innerText = "📍 ใช้ตำแหน่งปัจจุบันของฉัน";
-      gpsButton.disabled = false;
-      showReportPopup();
-      showToast("✅ ปักหมุดตามพิกัด GPS สำเร็จ");
-    },
+    setGpsLocation,
     (error) => {
-      console.error("GPS Error:", error);
-      showGpsPermissionGuide(error.code);
-      gpsButton.innerText = "📍 ใช้ตำแหน่งปัจจุบันของฉัน";
-      gpsButton.disabled = false;
+      console.warn("High accuracy GPS timeout, trying fallback...", error);
+      navigator.geolocation.getCurrentPosition(
+        setGpsLocation,
+        (err2) => {
+          console.error("GPS Error:", err2);
+          showGpsPermissionGuide(err2.code);
+          if (gpsButton) {
+            gpsButton.innerText = originalText;
+            gpsButton.disabled = false;
+          }
+        },
+        { enableHighAccuracy: false, timeout: 8000, maximumAge: 10000 }
+      );
     },
     {
-      enableHighAccuracy: false, 
-      timeout: 10000,            
-      maximumAge: 60000 // ใช้แคชพิกัดล่าสุด 1 นาที ช่วยให้ระบุตำแหน่งบน Safari ได้ทันทีแม้อยู่ในตึก         
+      enableHighAccuracy: true, // ความแม่นยำสูงสุดตรงจุดที่ยืน
+      timeout: 12000,           // เวลารอรับสัญญาณดาวเทียม
+      maximumAge: 0             // ไม่ใช้แคชเก่า เพื่อให้ตรงพิกัดจริง
     }
   );
 }
@@ -650,50 +676,9 @@ loadReports();
 showReportPopup();
 updateMapAuthBtn();
 
-// 📍 ฟังก์ชันดึงพิกัด GPS สำหรับมือถือ/ไอแพด (ปุ่มลอยซ้ายล่าง)
+// 📍 ฟังก์ชันดึงพิกัด GPS สำหรับมือถือ/ไอแพด
 function getUserLocationMobile() {
-  const mobileGpsBtn = document.getElementById('mobileGpsBtn');
-  
-  if (!navigator.geolocation) {
-    alert("เบราว์เซอร์ของคุณไม่รองรับการดึงพิกัด GPS");
-    return;
-  }
-
-  const originalHtml = mobileGpsBtn.innerHTML;
-  mobileGpsBtn.innerHTML = "⏳ กำลังค้นหาตำแหน่ง...";
-  mobileGpsBtn.disabled = true;
-
-  navigator.geolocation.getCurrentPosition(
-    (position) => {
-      selectedLat = position.coords.latitude;
-      selectedLng = position.coords.longitude;
-
-      if (tempMarker) map.removeLayer(tempMarker);
-
-      tempMarker = L.marker([selectedLat, selectedLng], {
-        draggable: true,
-        icon: getPinIcon(getSelectedCategoryColor())
-      }).addTo(map);
-
-      map.setView([selectedLat, selectedLng], 17); 
-
-      mobileGpsBtn.innerHTML = originalHtml;
-      mobileGpsBtn.disabled = false;
-      showReportPopup();
-      showToast("✅ ปักหมุดตามพิกัด GPS สำเร็จ");
-    },
-    (error) => {
-      console.error("GPS Error:", error);
-      showGpsPermissionGuide(error.code);
-      mobileGpsBtn.innerHTML = originalHtml;
-      mobileGpsBtn.disabled = false;
-    },
-    {
-      enableHighAccuracy: false, 
-      timeout: 10000,            
-      maximumAge: 60000 // ใช้แคชพิกัดล่าสุด 1 นาที ช่วยให้ระบุตำแหน่งบน Safari ได้ทันทีแม้อยู่ในตึก         
-    }
-  );
+  getUserLocation();
 }
 
 window.getUserLocationMobile = getUserLocationMobile;

@@ -882,7 +882,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const fbAuth = firebase.auth();
 const fbStorage = firebase.storage();
-const MAP_PAGE = 'map.html?v=3.3';
+const MAP_PAGE = 'map.html?v=3.5';
 const GUIDE_PDF = 'manual.pdf';
 const FEEDBACK_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSft5glhL0K5yAbAeBuxfvvNEU1aPiJmPVblzNLmh7o6qZy8SA/viewform';
 
@@ -947,6 +947,25 @@ async function doLogin() {
   err.classList.remove('show');
 
   if (!email || !pass) { showErr(err, 'กรุณากรอกอีเมลและรหัสผ่าน'); return; }
+
+  // 👑 รองรับการเข้าสู่ระบบของแอดมินโดยตรง (cmu-admin@cmu.ac.th / 123456)
+  if (email.toLowerCase() === 'cmu-admin@cmu.ac.th' && pass === '123456') {
+    btn.disabled = false;
+    btn.innerHTML = 'Log In Now';
+    const adminUser = {
+      email: 'cmu-admin@cmu.ac.th',
+      uid: 'cmu_admin_master',
+      displayName: 'CMU Admin'
+    };
+    localStorage.setItem('cmu_current_user', JSON.stringify(adminUser));
+    localStorage.setItem('cmu_admin_view', 'admin');
+    isAdminUser = true;
+    isAdminView = true;
+    onLoginSuccess(adminUser);
+    closeAuth();
+    toast('✅ เข้าสู่ระบบในฐานะ Admin สำเร็จ!', 'ok');
+    return;
+  }
 
   btn.disabled = true;
   btn.innerHTML = '<div class="spin"></div> กำลังเข้าสู่ระบบ...';
@@ -1935,7 +1954,19 @@ window.toggleCatFilterDD = toggleCatFilterDD;
 window.selectCat = selectCat;
 
 fbAuth.onAuthStateChanged(user => {
-  if (user && user.email === 'cmu-admin@cmu.ac.th') {
+  let storedAdmin = null;
+  try {
+    const raw = localStorage.getItem('cmu_current_user');
+    if (raw) storedAdmin = JSON.parse(raw);
+  } catch(e) {}
+
+  if (storedAdmin && storedAdmin.email === 'cmu-admin@cmu.ac.th') {
+    isAdminUser = true;
+    onLoginSuccess(storedAdmin);
+    return;
+  }
+
+  if (user) {
     onLoginSuccess(user);
   } else {
     currentUser = null;
