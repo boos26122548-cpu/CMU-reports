@@ -191,6 +191,11 @@ async function loadReports() {
         return;
       }
 
+      // ตรวจสอบพิกัดละติจูดและลองจิจูด ต้องถูกต้องเพื่อป้องกัน Leaflet Error
+      if (!r.lat || !r.lng || isNaN(Number(r.lat)) || isNaN(Number(r.lng))) {
+        return;
+      }
+
       // สีหมุดตามสถานะ (กำลังดำเนินการ = ส้ม, เสร็จแล้ว = เขียว, ส่งต่อ = แดง)
       // สีหมุดตามหมวดหมู่ (เมื่อเป็นสถานะ รอรับเรื่อง)
       let pinColor;
