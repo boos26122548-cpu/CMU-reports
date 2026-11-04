@@ -594,7 +594,7 @@ function getUserLocation() {
       gpsButton.disabled = false;
     }
     showReportPopup();
-    showToast(✅ ปักหมุดตรงจุดที่คุณยืนแล้ว (ความแม่นยำ ± ม.));
+    showToast('✅ ปักหมุดตรงจุดที่คุณยืนแล้ว (ความแม่นยำ ±' + accuracy + ' ม.)');
   };
 
   // ดึงพิกัด GPS ความแม่นยำสูง (เปิดชิปฮาร์ดแวร์ GPS)
